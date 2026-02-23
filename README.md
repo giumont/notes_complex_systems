@@ -1,7 +1,7 @@
 # Appunti del Corso "Introduzione alla Fisica dei Sistemi Complessi"
 
 Questo repository contiene gli appunti raccolti dagli studenti relativi ad un corso di **Introduzione alla Fisica dei Sistemi Complessi** della laurea in **Fisica** dell'**Università di Bologna**. Il materiale è disponibile sia in formato sorgente LaTeX (`.tex`) sia in formato finale (`.pdf`).
-## Disclaimer: Questo documento è un progetto open-source indipendente e non ufficiale. Eventuali errori o omissioni sono responsabilità degli autori e non del titolare del corso.
+### Disclaimer: Questo documento è un progetto open-source indipendente e non ufficiale. Eventuali errori o omissioni sono responsabilità degli autori e non del titolare del corso.
 ---
 
 ## 📖 Come Consultare le Dispense
