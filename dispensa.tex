@@ -1,0 +1,1456 @@
+\documentclass[12pt,a4paper]{article}
+
+% --- Pacchetti Standard ---
+\usepackage[utf8]{inputenc}
+\usepackage[italian]{babel}
+\usepackage{amsmath, amssymb, amsthm}
+\newtheorem{theorem}{Teorema} % Definisce l'ambiente "theorem"
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{bbm}
+\usepackage{comment}
+
+\geometry{margin=1.5cm}
+
+% --- Titolo e Autore ---
+\title{\textbf{Appunti del corso "Introduzione alla Fisica dei Sistemi Complessi"}
+\author{Giulia Montagnani \\ \small Corso tenuto dal Prof. A. Bazzani}}
+\date{Edizione 2025-2026}
+
+\begin{document}
+
+\maketitle 
+
+\tableofcontents
+\newpage
+\section{Sistemi dinamici, caos e spazio delle fasi}
+\subsection{Sistemi dinamici}
+Consideriamo la definizione generale di \textbf{sistema dinamico}.
+Un sistema dinamico è definito da una terna $(X, G, \Phi)$ dove:
+\begin{itemize}
+    \item $X$ è lo spazio delle fasi, solitamente uno spazio metrico $(X, d)$ o topologico, connesso e compatto.
+    \item $G$ è un semigruppo temporale (rispetto a un'operazione $\circ$ solitamente additiva), con elemento neutro $e$ (o $0$).
+    \item $\Phi$ è il flusso di fase, ovvero l'azione di $G$ su $X$, definita come:
+    \[
+    \Phi: G\times X \to X\qquad \Phi_g(x) := \Phi(g,x)
+    \]
+\end{itemize}
+che rispetta le seguenti proprietà:
+\begin{itemize}
+    \item Identità: $\Phi_e(x) = x \qquad \forall x\in X$
+    \item Composizione: $\Phi_{t+s}(x) = \Phi_t(\Phi_s(x)) \qquad \forall t,s \in G$
+\end{itemize}
+
+\subsubsection{Uso in fisica classica dei sistemi dinamici}
+In fisica, si studia di solito un \textbf{sistema dinamico a tempo continuo} nella forma $(X, \mathbb{R}, \Phi)$, dove:
+\begin{itemize}
+    \item $X\subseteq \mathbb{R}^{2n}$ è lo spazio delle fasi $(q,p)$ con $q,p\in \mathbb{R}^n$.
+    \item $t \in \mathbb{R}$ è il parametro temporale.
+    \item $\Phi_t(x): \mathbb{R} \times X \to X$ è una mappa differenziabile, e corrisponde alla soluzione unica di un problema di Cauchy associato ad una ODE autonoma valutato all'istante $t$, ovvero:
+    \[
+    \Phi_t (x_0) = x(t)\qquad \begin{cases}\dot x(t) = a(x) \\ x(0) = x_0 \end{cases}
+    \]
+\end{itemize}
+In condizioni di sufficiente regolarità, si può quindi scrivere il campo vettoriale $a(x)$ come generatore del flusso:
+\[
+a(x) = \left. \frac{d}{dt} \Phi_t(x) \right|_{t=0}
+\]
+
+Il teorema di esistenza e unicità garantisce che le \textit{traiettorie} 
+\[
+\{\Phi_t(x_0) \mid t \in \mathbb{R}\}
+\]
+non si intersechino mai nello spazio delle fasi (fatta eccezione per i punti di equilibrio).
+
+Per sistemi fisici conservativi standard, esiste un potenziale $V \in C^1(\mathbb{R}^n, \mathbb{R})$. Posta la massa unitaria ($m=1$), il flusso di fase del \textit{sistema hamiltoniano} è definito dal campo vettoriale:
+\[
+\begin{cases}
+\dot q = p \\
+\dot p = - \frac{\partial V}{\partial q}
+\end{cases}
+\]
+Tali sistemi possiedono sempre un integrale primo del moto (l'Hamiltoniana $H$), fisicamente pari all'energia totale $E$ del sistema. In 1D si ricava:
+\[
+\dot q \ddot q = - \dot q \frac{\partial V}{\partial q} \implies \frac{d}{dt} \left(\frac{\dot{q}^2}{2}\right) = - \frac{d}{dt} V(q)
+\]
+da cui si ottiene la costante del moto:
+\[
+E = H(q,p) := \frac{p^2}{2} + V(q)
+\]
+
+Questo permette di invocare il \textbf{Teorema di Liouville}:
+Un sistema hamiltoniano con $H\in C^2(X)$ preserva la misura (volume) di Lebesgue dello spazio delle fasi. Per ogni dominio misurabile $A\subseteq X$:
+\[
+m(\Phi_t(A)) = \int_{\Phi_t(A)} 1 \, dm = \int_A |\det J(\Phi_t)| \, dm = m(A)
+\]
+poiché il determinante dello Jacobiano della trasformazione è strettamente unitario: $|\det J(\Phi_t)| = 1$. Da ora supporremo sempre che i sistemi dinamici a cui ci si riferisce siano di questo tipo.
+\subsection{Il problema della stabilità}
+Introduciamo il concetto di stabilità secondo Ljapunov per un sistema dinamico $(X, \mathbb{R}, \Phi)$. 
+Sia $a(x): X \to \mathbb{R}^{2n}$ il campo vettoriale autonomo e $\Phi_t$ l'associato flusso di fase:
+\[
+\dot x(t) = a(x) \qquad a(x) = \left. \frac{d}{dt} \Phi_t(x) \right|_{t=0}
+\]
+
+\textbf{Definizione:} Un punto di equilibrio $x_0 \in X$ (tale che $a(x_0)=0$) si dice \textbf{stabile secondo Ljapunov} se per ogni $\epsilon>0$ esiste un $\delta >0$ tale che, per ogni condizione iniziale $x \in X$ per cui $d(x, x_0)< \delta$, si ha $d(\Phi_t(x), x_0) < \epsilon$ per ogni $t \geq 0$.
+
+Introducendo la derivata di Lie (o derivata direzionale) lungo il campo vettoriale $a(x)$ per una funzione scalare $f \in C^1(X, \mathbb{R})$:
+\[
+\dot f(x) := \langle \nabla f(x), a(x) \rangle = \left. \frac{d}{dt} f(\Phi_t(x)) \right|_{t=0}
+\]
+Si dice che $f$ è una \textbf{funzione di Ljapunov} per l'equilibrio $x_0 \in X$ se:
+\begin{itemize}
+    \item $f(x_0) = 0$
+    \item $f(x) > 0$ per ogni $x \neq x_0$ (definita positiva)
+    \item $\dot f(x) \leq 0$ per ogni $x$ in un intorno di $x_0$ (semidefinita negativa)
+\end{itemize}
+Se esiste una tale funzione, il punto $x_0$ è stabile.
+
+In fisica, la precisione della misura (la conoscenza della posizione di un punto nello spazio delle fasi $X$) è finita. È quindi cruciale caratterizzare la dinamica di un punto perturbato $x(0) = x_0(0) + \delta x(0)$ con $\|\delta x(0)\| \ll 1$, studiando l'evoluzione temporale della perturbazione $\delta x(t)$.
+
+Sviluppando in serie di Taylor attorno alla traiettoria non perturbata $x_0(t)$:
+\[
+\frac{d}{dt}x(t) = a(x_0(t) + \delta x(t)) = a(x_0(t)) + \left. \frac{\partial a}{\partial x} \right|_{x_0(t)} \delta x(t) + O(\|\delta x(t)\|^2)
+\]
+Poiché $\dot{x}_0(t) = a(x_0(t))$, sottraendo questa quantità ad ambo i membri e linearizzando si ottiene l'equazione variazionale:
+\[
+\dot{\delta x}(t) \simeq J(x_0(t)) \delta x(t)
+\]
+dove $J(x_0(t))$ è la matrice Jacobiana del campo vettoriale valutata lungo la traiettoria.
+
+In uno spazio delle fasi di dimensione n, un sistema dinamico autonomo può ammettere al massimo $n-1$ integrali primi del moto funzionalmente indipendenti (ovvero le cui funzioni presentano gradienti linearmente indipendenti in quasi ogni punto).
+
+L'esistenza di $n-1$ integrali primi indipendenti garantisce la completa integrabilità del sistema. Nello spazio delle fasi, l'intersezione delle $n-1$ ipersuperfici di livello $I_k (x_1, \dots, x_n) = C_k$ (con $k=1,\dots, n-1$) vincola la dinamica a una singola varietà monodimensionale. Questa curva geometrica corrisponde all'esatta traiettoria (orbita) del sistema, rendendo superflua l'integrazione numerica delle equazioni del moto rispetto al tempo.
+
+\subsubsection{Linearizzazione attorno a un punto di equilibrio}
+Se il campo vettoriale è autonomo e valutiamo la stabilità attorno a un \textbf{punto di equilibrio fisso} $x_e$ (anziché lungo una traiettoria generica), il Jacobiano è una matrice di costanti reali: $A = J(x_e)$. La dinamica di $\delta x(t)$ è governata dall'ODE lineare a coefficienti costanti:
+\[
+\dot{\delta x}(t) = A \delta x(t) \implies \delta x(t) = e^{A t} \delta x(0)
+\]
+La matrice esponenziale $e^{At}$ è definita dalla serie:
+\[
+e^{At} = \sum_{k=0}^\infty \frac{A^k t^k}{k!}
+\]
+Se $A$ è diagonalizzabile, possiede autovalori $\lambda_k \in \mathbb{C}$ e autovettori $v_k$. Esprimendo la perturbazione iniziale come combinazione lineare degli autovettori, $\delta x(0) = \sum_k c_k v_k$, la soluzione assume la forma spettrale:
+\[
+\delta x(t) = \sum_k c_k e^{\lambda_k t} v_k
+\]
+La stabilità del punto $x_e$ dipende dallo spettro di $A$:
+\begin{itemize}
+    \item Se tutti gli autovalori hanno parte reale strettamente negativa ($\text{Re}(\lambda_k) < 0 \; \forall k$), il punto $x_e$ è asintoticamente stabile.
+    \item Se esiste almeno un autovalore con parte reale strettamente positiva ($\text{Re}(\lambda_k) > 0$), il punto è instabile (esiste una direzione lungo la quale la perturbazione cresce esponenzialmente).
+\end{itemize}
+
+\subsubsection{Caso generale e caos deterministico}
+Per lo studio della stabilità di una \textbf{traiettoria generica} $x_0(t)$ (non un punto fisso), la matrice Jacobiana dipende dal tempo: $A(t) = J(x_0(t))$.
+\[
+\dot{\delta x}(t) = A(t) \delta x(t)
+\]
+In questo caso, poiché matrici valutate a istanti diversi generalmente non commutano ($A(t_1)A(t_2) \neq A(t_2)A(t_1)$), la soluzione non si può esprimere come un semplice esponenziale dell'integrale di $A(t)$ (perché, se le matrici non commutano, $e^X e^Y \ne e^{X+Y}$). 
+
+Per quantificare la divergenza a lungo termine, si introducono gli \textbf{esponenti di Ljapunov} $\lambda$:
+\[
+\lambda = \lim_{t \to \infty} \lim_{\|\delta x(0)\| \to 0} \frac{1}{t} \ln \frac{\|\delta x(t)\|}{\|\delta x(0)\|}
+\]
+In uno spazio delle fasi a $n$ dimensioni, esistono $n$ esponenti di Ljapunov, associati agli assi principali dell'ellissoide di evoluzione della perturbazione iniziale.
+Si ha che:
+\begin{itemize}
+    \item Se il massimo esponente di Ljapunov (MLE) è strettamente positivo ($\lambda_{max} > 0$), due traiettorie inizialmente arbitrariamente vicine divergono esponenzialmente nel tempo.
+\end{itemize}
+Questa estrema sensibilità alle condizioni iniziali in un sistema deterministico e limitato crea una perdita di informazione sul microstato iniziale dovuta all'amplificazione degli errori di misura (orizzonte di predicibilità finito). Questo fenomeno definisce il regime di \textbf{caos deterministico}.
+
+\subsection{Ipotesi ergodica e descrizione probabilistica}
+In una situazione caotica, poiché lo spazio delle fasi $X$ è limitato, le traiettoria che divergono esponenzialmente devono "ripiegarsi" ("folding"), occupando densamente tutto lo spazio.
+
+Da ciò deriva l'\textbf{ipotesi di ergodicità}: per un sistema ergodico, la media temporale di un osservabile equivale alla media spaziale (nello spazio delle fasi) pesata sulle probabilità di occupazione.
+
+Sempre in ambito classico e deterministico, per sistemi conservativi con spazio delle fasi limitato, vale inoltre il 
+
+\paragraph{Teorema del ritorno di Poincaré}
+Sia dato un sistema dinamico deterministico, conservativo (il cui flusso preserva i volumi nello spazio delle fasi per il Teorema di Liouville) e confinato in uno spazio delle fasi di volume finito. Allora, per quasi ogni condizione iniziale, la traiettoria del sistema tornerà, dopo un tempo sufficientemente lungo, in un intorno arbitrariamente piccolo del punto di partenza. 
+Fisicamente, questo implica che un sistema isolato e limitato rivisiterà infinite volte, a meno di una precisione arbitraria, ogni configurazione microscopica precedentemente assunta.
+
+\subsubsection{Passaggio alla rappresentazione probabilistica}
+A causa dell'impossibilità pratica di tracciare singole traiettorie microscopiche per tempi lunghi, l'ergodicità ci autorizza a passare a una descrizione statistica, calcolando le distribuzioni di probabilità dei punti nello spazio delle fasi.
+
+Introduciamo quindi un risultato fondamentale di teoria della probabilità:
+
+\paragraph{Teorema del Limite Centrale}
+Siano date $N$ variabili aleatorie $x_1, x_2, \dots, x_N$ indipendenti e identicamente distribuite (i.i.d.), aventi valore atteso $\mu = \langle x \rangle$ e varianza $\sigma^2$ finite. Al tendere di $N \to \infty$, la distribuzione di probabilità della media campionaria converge a una distribuzione normale (gaussiana) con media $\mu$ e varianza $\sigma^2/N$, indipendentemente dalla forma specifica della distribuzione di partenza delle singole variabili.
+
+Si definisce allora il valore medio empirico 
+\[
+\langle x\rangle_E = \frac 1N \sum_i x_i \simeq \frac 1N \sum_i \langle x_i \rangle
+\]
+e, per il Teorema del Limite Centrale, la deviazione standard della media scala come $1/\sqrt{N}$, da cui si ha che:
+\[
+\langle x\rangle_E = \langle x\rangle_V + O(1/\sqrt{N})
+\]
+In meccanica statistica, poiché il numero di particelle è dell'ordine del numero di Avogadro ($N \sim N_A \approx 6.022 \cdot 10^{23}$), queste fluttuazioni dall'equilibrio termodinamico (indicato da $\langle x\rangle_E$) sono del tutto trascurabili.
+
+Per ricavare la distribuzione di probabilità appropriata al sistema fisico, si utilizza il principio di massimizzazione dell'entropia di Shannon-Gibbs. Si cerca la distribuzione che massimizza l'incertezza sotto gli opportuni vincoli fisici (energia, numero di particelle, volume). Per un sistema isolato, in assenza di vincoli aggiuntivi oltre all'energia fissata, la distribuzione che massimizza l'entropia è quella uniforme sulla superficie a energia costante nello spazio delle fasi (ensemble microcanonico).
+
+La meccanica statistica classica si occupa esclusivamente dello stato asintotico già rilassato all'equilibrio, ignorando il transitorio. I sistemi complessi introducono invece lo studio esplicito della dinamica fuori dall'equilibrio e dell'evoluzione temporale verso tali stati stazionari.
+\paragraph{Esempio di sistema caotico: Mappa di Arnold (Cat Map)}
+Un esempio classico di sistema fortemente caotico e discreto è la mappa di Arnold. Si definisce sul toro unitario $\mathbb{T}^2 = [0,1) \times [0,1)$ tramite una matrice di interi a determinante unitario:
+$$ \begin{pmatrix} x_{n+1} \\ y_{n+1} \end{pmatrix} = \begin{pmatrix} 2 & 1 \\ 1 & 1 \end{pmatrix} \begin{pmatrix} x_n \\ y_n \end{pmatrix} \pmod 1 $$
+
+La matrice $A = \begin{pmatrix} 2 & 1 \\ 1 & 1 \end{pmatrix}$ ha autovalori $\lambda_{1,2} = \frac{3 \pm \sqrt{5}}{2}$.
+\begin{itemize}
+    \item $\lambda_1 > 1$: direzione di espansione
+    \item $\lambda_2 < 1$: direzione di contrazione
+\end{itemize}
+e le due direzioni sono ortogonali.
+Poiché $\lambda_1 \cdot \lambda_2 = \det(A) = 1$, l'area dello spazio delle fasi è conservata (sistema conservativo), ma ogni piccola incertezza iniziale viene amplificata esponenzialmente lungo la direzione instabile e schiacciata lungo quella stabile.
+
+Se le coordinate iniziali del punto sono razionali, l'orbita sarà periodica. Se sono irrazionali, l'orbita riempirà densamente tutto lo spazio delle fasi (ergodicità).
+L'operazione $\pmod 1$ impone le condizioni al contorno periodiche del toro $\mathbb{T}^2$. In questo caso, essa fa in modo che i punti che, espansi lungo la direzione instabile $\lambda_1$, escono dal dominio, vi rientrino dal bordo opposto: questo equivale al concetto topologico di \emph{folding}  delle traiettorie. 
+
+
+% Inoltre, applicando un opportuno sezionamento dello spazio delle fasi (Partizione di Markov), la transizione dell'orbita da una regione all'altra può essere descritta come un processo markoviano tramite il formalismo della dinamica simbolica.
+
+Teoricamente, questo sistema preserva la misura di Lebesgue poiché $|\det A| = 1$. La mappa è biunivoca e invertibile, in quanto l'inversa della matrice $A$ ha a sua volta elementi interi, permettendo l'inversione esatta dell'operazione di modulo. Questo significa che teoricamente il sistema è microscopicamente reversibile e non c'è perdita di informazione. Il valore atteso di un'osservabile $I(x,y)$ si calcola come:
+$$ \langle I \rangle = \int_{\mathbb{T}^2} I(x,y) \rho(x,y) dx dy $$
+
+Tuttavia, nella pratica fisica, le condizioni iniziali sono note solo con precisione finita (coarse-graining). Suddividendo il toro in celle di lato $\epsilon$, la dinamica di mescolamento (\textit{mixing}) stira ogni cella in lunghi filamenti che si avvolgono sul toro. A livello macroscopico, questa perdita di risoluzione fa subentrare l'irreversibilità temporale: la densità di probabilità $\rho(x,y)$ tende rapidamente alla distribuzione uniforme stazionaria $\rho(x,y) = 1$. L'osservabile si calcola quindi semplicemente rispetto alla misura di Lebesgue:
+$$ \langle I \rangle = \int_{\mathbb{T}^2} I(x,y) dx dy $$
+
+\subsubsection{Approssimazione di campo medio}
+L'ergodicità ci permette di fare alcune utili approssimazioni quando vogliamo studiare sistemi del tipo
+\[
+\dot x = a(x,y)
+\dot y = b(y)
+\qquad \| b\| \gg \| a \|
+\]
+
+In questo caso, il tempo di rilassamento su $y$ (variabile veloce) è molto inferiore a quello necessario per $x$ (variabile lenta). Quindi, posso considerare $y$ come variabile ergodica, distribuita nel suo spazio delle fasi $Y$ secondo una \textbf{misura invariante}
+\[
+d\mu_y = \rho(y) dy
+\]
+dove $dy$ è la misura di Lebesgue associata allo spazio delle fasi di $y$ e $\rho(y)$ è la sua densità di probabilità invariante.
+
+Si dice misura invariante perché una volta che il sistema dinamico di $y$ ha raggiungo questa distribuzione, non cambia più per evoluzione temporale:
+\[
+\mu_y(\Phi^{-t} A) = \mu_y(A)
+\]
+con $A\subseteq Y$.
+
+Posso quindi ridurre il sistema ad una ODE per una sola variabile, effettuando una approssimazione di campo medio
+\[
+\dot x = \int a(x,y) d\mu(y) = \overline a(x)
+\]
+dove $\overline a(x)$ è quindi il valore atteso rispetto alla distribuzione di probabilità invariante di $y$ del campo $a(x,y)$.  
+
+Nelle applicazioni fisiche (ad es $y$ bagno termico) la misura invariante ha spesso forma gaussiana 
+\[
+d\mu(y) = \int_A e^{- \frac{y^2}{2\sigma^2} dy}
+\]
+
+\section{Modelli}
+\subsection{Equazione logistica e modello di Lotka-Volterra}
+\subsubsection{Equazione logistica}
+In ecologia, i sistemi dinamici considerati sono dati dall'evoluzione temporale di una specie $x(t)$.
+La variabile può rappresentare il numero di individui o la loro densità (effettuando il riscalamento $x\mapsto \frac xN$).  
+
+Il modello più semplice di campo vettoriale autonomo $\dot x$ associato al flusso di fase del sistema ha la seguente forma
+\[
+\dot x(t) = a(x) x(t) - bx^2(t),\qquad a(x) = a_0 - bx(t)
+\]
+ovvero ha forma dipendente dalla densità (dal numero di individui) $x(t)$.
+
+In 1D, il sistema è integrabile per quadrature
+\[
+\int_{x(0)}^{x(t)} \frac{dx'}{a_0 x' - bx'^2} = t
+\]
+
+E' opportuno riscalare le variabili (questo corrisponde a modificare le unità di misura, e ovviamente non modifica la fisica del sistema) per ottenere una forma più esplicativa e facilmente risolvibile:
+\[
+x \mapsto \mu x = y \quad \mu = \frac {b}{a_0}
+t \mapsto \lambda t = \tau \quad \lambda = a_0
+\]
+In questo modo si ottiene la forma standard della \textbf{equazione logistica}
+\[
+\frac{d y}{d\tau} = y(1-y)
+\]
+Integrando per quadrature si ottiene la \textbf{funzione logistica}
+\[
+y(\tau) = \frac 1 {1+ e^{-\tau}}
+\]
+che è la tipica forma a sigmoide.
+
+% [inserisci immagine]
+
+I parametri caratteristici del sistema iniziale determinano le caratteristiche della funzione
+- $\mu$ determina la velocità di convergenza al limite asintotico: $y \to 1 \iff x\to \frac {a_0}b$
+- $\lambda$ determina quanto è smooth il punto di flesso in $y=0$ ("a gradino" per $a_0$ grande, smooth per $a_0$ piccolo)
+
+\subsubsection{Passaggio al modello LV}
+Volterra interpreta il termine $-bx^2$ nell. Eq. [ref logistica] come un termine di competizione tra coppie di individui: in effetti, per $N$ grande, il numero di interazioni pairwise è 
+\[
+\frac{N(N-1)} 2 \sim N^2
+\]
+
+Il termine lineare $a_0 x$ può essere interpretato invece come un termine di crescita intrinseca. Si noti che questo termine, essendo positivo, se fosse di ordine $x^2$ o superiore creerebbe una singolarità, divergendo in \emph{tempo finito} (al contrario della forma esponenziale, che diverge in tempo infinito).
+Ad esempio, per una eq. del tipo $\dot x = c x^2$, integrando per quadrature si ottiene 
+\[
+x(t) = \frac{x_0}{1-at x_0}
+\]
+che diverge a $+\infty$ al tempo finito $t_0 = \frac 1{a x_0}$.
+
+Il classico modello preda-predatore di Lotka Volterra "sdoppia" questa forma funzionale
+\[
+\frac{dx(t)}{dt} = a x(t) - b x(t) y(t)
+\frac{dy(t)}{dt} = - c y(t) + d x(t) y(t)
+\]
+dove $x$ rappresenta la preda e $y$ il predatore.
+
+Facendo gli opportuni riscalamenti
+\[
+t \mapsto \lambda t = \tau
+x \mapsto \mu x = x'
+y \mapsto \nu y = y'
+\]
+e imponendo
+\[
+\frac a\mu = 1\quad \frac c\nu = 1 \qquad \frac{b\lambda}{ac} = \frac{ac}{d\lambda}=\omega
+\]
+ottengo la forma generale
+\[
+\frac{dx'}{d\tau} = x' - \omega x' y'
+\frac{dy'}{d\tau} = -y' + \frac 1{\omega} x' y' 
+\]
+Integrando per quadrature, e passando alle variabili $u=\ln x, v = \ln y$, si ottiene la forma
+\[
+\frac {du}{d\tau} = 1-\omega e^v = \frac{\delta H}{\delta v}
+\frac{dv}{d\tau} = -1 + \frac 1\omega e^{u} = - \frac{\delta H}{\delta u}
+\]
+Scrivendo in questa forma, è infatti immediato verificare che
+\[
+H(u,v) = (v-\omega e^v) + (u-\frac 1\omega e^u)
+\]
+è l'integrale primo del moto.
+
+Poiché per questo sistema $n=2$, si conclude che $H$ è l'unico integrale primo di questo sistema (la cui esistenza per un SD generico non è affatto garantita!). 
+
+\subsubsection{Diagramma delle fasi per il modello LV}
+Per il diagramma di fase, ci dobbiamo chiaramente limitare al quadrante positivo $(x,y)\ge 0$ per mantenere significato biologico.
+
+L'esistenza dell'integrale primo del moto $H$ (di Eq. [...]) ci garantisce che per questo sistema le orbite sono \textbf{chiuse} (corrispondono alle curve di livello $H(x,y)=cost$).
+
+Osservando l'Eq. [GLV], si trova che essa ha due punti di equilibrio (derivate nulle):
+\[
+(x_1,y_1)=(0,0) \qquad (x_2.y_2) = \left( \omega, \frac 1\omega\right)
+\]
+In particolare:
+- l'equilibrio triviale è un punto punto iperbolico (si capisce guardando l'andamento sugli assi delle popolazioni), quindi è instabile
+- l'equilibrio $(x_2, y_2)$ è un punto ellittico, dunque è stabile. Questo si può dedurre a priori ricordando che le orbite devono avvenire su curve chiuse (curve di livello di $H$).
+
+Questo si può determinare direttamente linearizzando il sistema attorno a $(x_2, y_2)$.
+Considerando un incremento piccolo $(x_2+\delta x, y_2+\delta y)$ e scrivendo l. Eq. [GLV] per questo punto, elimnando i termini di ordine superiore al primo:
+\[
+\dot{\delta x} = \omega (-\omega \dot{\delta y}) = -\omega^2 \dot{\delta y}
+\dot{\delta y} = -\frac 1\omega \left(- \frac 1\omega \dot{\delta x}\right) = \frac 1{\omega^2} \dot{\delta x}
+\]
+Derivando ancora, ottengo delle oscillazioni armoniche:
+\[
+\ddot{\delta x} = -\delta x 
+\ddot{\delta y} =  -\delta y
+\]
+quindi le specie oscillano attorno al punto di equilibrio, e questo corrisponde a delle orbite ellittiche nello spazio delle fasi.
+
+
+\section{Processi stocastici, Random Walks e diffusione}
+
+\subsection{White noise e linearizzazione all'equilibrio stabile}\label{white_noise}
+
+Consideriamo un sistema dinamico autonomo di equazione
+\[
+\dot x(t) = a(x),
+\]
+e sia $x_0$ un punto di equilibrio \underline{stabile}, ovvero $a(x_0)=0$.
+
+Sappiamo che attorno a un punto di equilibrio $x_0$, per una piccola perturbazione
+\[
+\delta x(t) = x(t) - x_0,
+\]
+vale l’approssimazione lineare
+\begin{equation}
+\label{eq:linearized_dynamics}
+\dot{\delta x}(t) = A\,\delta x(t),
+\qquad
+A = \left. \frac{\partial a}{\partial x} \right|_{x_0},
+\end{equation}
+dove $A$ è la \textbf{matrice Jacobiana}. Da~\eqref{eq:linearized_dynamics} si ricava la soluzione
+\[
+\delta x(t) = e^{At}\,\delta x(0).
+\]
+
+Vogliamo ora studiare la dinamica introducendo una \textbf{perturbazione esterna stocastica}:
+\begin{equation}
+\label{eq:stochastic_dynamics}
+\dot x(t) = a(x) + \xi(t),
+\end{equation}
+dove $\xi(t)$ rappresenta il rumore ambientale, caratterizzato dalle seguenti proprietà statistiche:
+\begin{itemize}
+    \item \textbf{media nulla}:
+    \[
+    \langle \xi_i(t)\rangle = 0;
+    \]
+    \item \textbf{covarianza istantanea}:
+    \[
+    \langle \xi_i(t)\xi_j(t)\rangle = \delta_{ij}\,\epsilon^2,
+    \]
+    ovvero una matrice diagonale con varianza finita e costante nel tempo;
+    \item \textbf{correlazione temporale}:
+    \begin{equation}
+    \label{eq:noise_corr}
+    \langle \xi_i(t)\xi_j(t+\tau)\rangle
+    = \frac{\gamma}{2}\,\delta_{ij}\,\epsilon^2\,e^{-\gamma|\tau|}.
+    \end{equation}
+\end{itemize}
+
+Il parametro $\gamma^{-1}$ è la \textbf{costante di memoria} e rappresenta il tempo di predicibilità della perturbazione: per $\gamma$ piccolo, la componente $\xi_i$ varia lentamente. Il valore assoluto di $\tau$ è necessario per la stazionarietà del processo e garantisce che l’autocorrelazione sia simmetrica nel tempo.
+
+Si definisce \textbf{white noise} (rumore bianco) il limite ideale di un rumore a memoria nulla:
+\begin{equation}
+\label{eq:white_noise}
+\langle \xi_i(t)\xi_j(t+\tau)\rangle
+= \lim_{\gamma\to +\infty}
+\left[
+\frac{\gamma}{2}\,\delta_{ij}\,\epsilon^2\,e^{-\gamma|\tau|}
+\right]
+= \epsilon^2\,\delta_{ij}\,\delta(\tau).
+\end{equation}
+
+\emph{Il coefficiente $\gamma/2$ è l’unico che conserva l’area unitaria della distribuzione al limite}.  
+Imponendo infatti la normalizzazione
+\[
+\int_{-\infty}^{+\infty} c\,e^{-\gamma|\tau|}\,d\tau = 1,
+\]
+si ottiene
+\[
+2c \int_0^{+\infty} e^{-\gamma\tau}d\tau = 1
+\quad \Longrightarrow \quad
+c=\frac{\gamma}{2},
+\]
+garantendo che, per $\gamma\to\infty$, la funzione converga a una delta di Dirac con varianza finita $\epsilon^2$.
+
+Poiché il campo vettoriale $a(x)$ è in generale non lineare, \emph{l’operatore di valore atteso non commuta con la funzione}:
+\[
+\langle a(x)\rangle \neq a(\langle x\rangle).
+\]
+Di conseguenza, non è garantito che $\langle x(t)\rangle \to x_0$. Applicando il valore medio a~\eqref{eq:stochastic_dynamics} si ottiene infatti
+\[
+\frac{d}{dt}\langle x(t)\rangle
+= \langle a(x)\rangle + \langle \xi(t)\rangle
+\neq a(\langle x\rangle).
+\]
+
+\underline{Ipotesi di lavoro}: l’intensità del rumore $\epsilon$ è sufficientemente piccola da mantenere le traiettorie nell’intorno lineare dell’equilibrio stabile $x_0$.
+
+Sotto questa ipotesi possiamo linearizzare~\eqref{eq:stochastic_dynamics}, ottenendo il \textbf{processo di Ornstein--Uhlenbeck}:
+\begin{equation}
+\label{eq:ou_linearized}
+\dot{\delta x}(t) = A\,\delta x(t) + \xi(t).
+\end{equation}
+
+\subsubsection{Risoluzione analitica del processo di Ornstein--Uhlenbeck}
+
+La soluzione di~\eqref{eq:ou_linearized} si ottiene tramite il metodo della variazione delle costanti:
+\begin{equation}
+\label{eq:ou_solution}
+\delta x(t)
+= e^{At}\,\delta x(0)
++ \int_0^t e^{A(t-s)}\xi(s)\,ds.
+\end{equation}
+
+Poiché $x_0$ è un equilibrio stabile, tutti gli autovalori di $A$ hanno parte reale negativa. \emph{Per tempi lunghi ($t\to\infty$) il contributo delle condizioni iniziali decade esponenzialmente}, e da~\eqref{eq:ou_solution} segue
+\[
+\delta x(t)
+\simeq \int_0^t e^{A(t-s)}\xi(s)\,ds.
+\]
+
+Consideriamo ora la \textbf{matrice di covarianza}
+\[
+C_{ij} = \lim_{t\to+\infty}\langle \delta x_i(t)\delta x_j(t)\rangle.
+\]
+Usando la forma asintotica della soluzione e cambiando variabili ($u=t-s$, $v=t-s'$), otteniamo
+\begin{equation}
+\label{eq:covariance_integral}
+C_{ij}
+= \int_0^\infty \!\!\int_0^\infty
+[e^{Au}]_{ik}[e^{Av}]_{jh}
+\langle \xi_k(t-u)\xi_h(t-v)\rangle
+\,du\,dv.
+\end{equation}
+
+Utilizzando la proprietà di white noise~\eqref{eq:white_noise},
+\[
+\langle \xi_k(t-u)\xi_h(t-v)\rangle
+= \epsilon^2\,\delta_{kh}\,\delta(v-u),
+\]
+l’integrale~\eqref{eq:covariance_integral} si riduce a
+\[
+C_{ij}
+= \epsilon^2 \int_0^\infty [e^{Au}]_{ik}[e^{Au}]_{jk}\,du.
+\]
+
+Osservando che $[e^{Au}]_{jk}=[e^{A^T u}]_{kj}$, si ottiene la forma compatta
+\begin{equation}
+\label{eq:covariance_matrix}
+C = \epsilon^2 \int_0^\infty e^{Au}e^{A^T u}\,du.
+\end{equation}
+
+\underline{Ipotesi aggiuntiva}: la matrice Jacobiana è simmetrica, $A=A^T$.
+
+Sotto questa ipotesi, le matrici esponenziali commutano e~\eqref{eq:covariance_matrix} diventa
+\[
+C = \epsilon^2 \int_0^\infty e^{2Au}\,du.
+\]
+Poiché gli autovalori di $A$ hanno parte reale negativa, il termine esponenziale si annulla per $u\to\infty$ e si ottiene
+\begin{equation}
+\label{eq:fluctuation_dissipation}
+C = -\frac{\epsilon^2}{2}\,A^{-1}
+\qquad \Longrightarrow \qquad
+A = -\frac{\epsilon^2}{2}\,C^{-1}.
+\end{equation}
+
+\emph{La dinamica lineare è quindi interamente determinata dalla matrice di covarianza delle fluttuazioni}.
+
+L’ipotesi di simmetria di $A$ ha un significato fisico preciso: il sistema ammette un \textbf{potenziale scalare} quadratico
+\[
+V(x) = -\frac{1}{2}\langle x,Ax\rangle,
+\]
+tale che la dinamica linearizzata sia conservativa:
+\begin{equation}
+\label{eq:gradient_dynamics}
+\dot x = -\nabla V(x).
+\end{equation}
+
+\emph{Il sistema descrive un puro rilassamento sovrasmorzato lungo il gradiente del potenziale}, senza inerzia, oscillazioni o cicli limite.  
+L’equivalenza tra~\eqref{eq:linearized_dynamics} e~\eqref{eq:gradient_dynamics} è garantita se e solo se $A=A^T$, poiché
+\[
+\nabla\!\left(\tfrac12\langle x,Ax\rangle\right)
+= \tfrac12(A+A^T)x.
+\]
+
+
+\subsection{L'equazione di Langevin e la non differenziabilità}
+% La formalizzazione della dinamica di una particella soggetta a fluttuazioni stocastiche, introdotta in Eq.~\eqref{eq:stochastic_dynamics}, richiede di definire rigorosamente il concetto di equazione differenziale stocastica (SDE). In generale, una SDE monodimensionale si scrive nella forma di Langevin:
+% \begin{equation}
+%     dx(t) = a(x(t), t) dt + b(x(t), t) dW_t
+%     \label{eq:langevin}
+% \end{equation}
+% dove $a(x,t)$ rappresenta il termine deterministico di \textbf{deriva} (\emph{drift}), mentre $b(x,t)$ rappresenta l'ampiezza delle fluttuazioni o termine di \textbf{diffusione}. 
+
+Per risolvere l'equazione stocastica di Eq. \ref{eq:stochastic_dynamics}, non è possibile operare il limite di un integrale di Riemann come si farebbe in assenza del termine stocastico, perché \emph{le traiettorie risultano continue ma ovunque non differenziabili}. 
+
+Questo fenomeno emerge chiaramente provando a integrare come:
+\[
+x(\Delta t) = x(0) + \int_t^{t+\Delta t} a(x)dt + \omega_{\Delta t}
+\]
+dove $\omega_{\Delta t}$ è l'incremento stocastico su un intervallo $\Delta t$, definito come:
+\[
+\omega_{\Delta t} := \int_t^{t+\Delta t}\xi(s)ds
+\]
+Ricordando le proprietà statistiche del rumore, i momenti di $\omega_{\Delta t}$ sono:
+\begin{itemize}
+    \item Media nulla (per linearità dell'operatore valore atteso): 
+    \[\langle \omega_{\Delta t}\rangle = \int_t^{t+\Delta t} \langle \xi(s)\rangle ds = 0\]
+    \item Varianza: elevando al quadrato e sfruttando la simmetria del dominio di integrazione:
+    \[\langle (\omega_{\Delta t})^2\rangle = 2 \int_0^{\Delta t} \int_0^u \langle \xi(u)\xi(s)\rangle ds du\]
+\end{itemize}
+Sostituendo la forma esplicita dell'autocorrelazione per il rumore di Eq. \eqref{eq:noise_corr}:
+\[
+\langle (\omega_{\Delta t})^2\rangle =
+2 \int_0^{\Delta t}\int_0^u \frac \gamma 2 \epsilon^2 e^{-\gamma(u-s)} ds du
+= \epsilon^2 \int_0^{\Delta t} \left[ e^{-\gamma(u-s)} \right]_{s=0}^{s=u} du
+= \epsilon^2 \int_0^{\Delta t} (1 - e^{-\gamma u}) du
+\]
+e calcolando il \underline{limite di white noise} ($\gamma \to \infty$), si ottiene:
+\[
+\langle (\omega_{\Delta t})^2\rangle = \epsilon^2 \Delta t
+\]
+
+Questo risultato mostra che la varianza dell'incremento scala linearmente con il tempo, il che implica che \emph{l'ampiezza dell'incremento stesso scala con la radice quadrata di $\Delta t$}:
+\[
+(\omega_{\Delta t})^2 \propto \Delta t \implies \omega_{\Delta t} \propto \sqrt{\Delta t}
+\]
+Valutando il limite del rapporto incrementale per $\Delta t \to 0$, si dimostra l'impossibilità di definire una derivata classica:
+\[
+\lim_{\Delta t\to 0}\frac{x(t+\Delta t) - x(t)}{\Delta t} \simeq \lim_{\Delta t\to 0} \left( a(x(t)) + \frac{\omega_{\Delta t}}{\Delta t} \right)
+\]
+Poiché il termine stocastico diverge:
+\[
+\frac{\omega_{\Delta t}}{\Delta t} \sim \frac{\sqrt{\Delta t}}{\Delta t} = \frac{1}{\sqrt{\Delta t}} \xrightarrow{\Delta t \to 0} \infty
+\]
+si rende necessario abbandonare il calcolo infinitesimale classico in favore del calcolo stocastico.
+
+\subsubsection{Processo di Wiener e forma SDE}
+Visto che abbiamo dimostrato che per Eq. \ref{eq:stochastic_dynamics} le traiettorie non sono differenziabili, dobbiamo abbandonare la notazione di ODE.
+Usando l'euristica del paragrafo precedente, abbiamo però constatato che l'integrale del rumore $\xi(t)$ presenta delle proprietà ben definite (media e varianza). Vogliamo ora dare una base matematica rigorosa a questo comportamento introducendo il \textbf{processo di Wiener} $W_t$. 
+Esso non è definito tramite l'integrazione classica, ma come un \emph{processo stocastico a tempo continuo} caratterizzato dalle seguenti proprietà assiomatiche:
+\begin{itemize}
+\item \underline{valore iniziale nullo} quasi certamente: $P(W_0=0)=1$
+\item incrementi indipendenti: per ogni sequenza di istanti $0\le t_1 < t_2 <\dots < t_n$, gli incrementi $W_{t_i} - W_{t_{i-1}}$ sono \underline{variabili aleatorie mutualmente indipendenti}
+\item \underline{incrementi gaussiani}: per ogni $0\le s <t$, l'incremento $W_t - W_s$ è una variabile aleatoria che segue una distribuzione gaussiana con varianza pari all'incremento temporale:
+\[
+W_t - W_s \sim \mathcal N (0, t-s)
+\]
+\item \underline{traiettorie continue}: $W_t$ è continuo quasi ovunque rispetto a $t$ (ma in nessun punto differenziabile).
+\end{itemize}
+
+Fisicamente, un processo di Wiener descrive una particella con \emph{moto browniano}.
+A questo punto, possiamo sfruttare il differenziale del processo di Wiener $dW_t$, inteso come l'incremento del processo su un intervallo infinitesimo $dt$.
+Il termine $dW_t$ introdotto è un nuovo tipo di differenziale, che ha per definizione le seguenti proprietà:
+- media nulla: $\langle dW_t\rangle = 0$
+- varianza pari a $dt$: $\langle (dW_t)^2 \rangle = dt$
+- incrementi indipendenti per invervalli disgiunti ($t\ne s$): $\langle dW_t dW_s \rangle = \delta(t-s) ds$
+Quindi, ad ogni incremento temporale, l'incremento stocastico $dW_t$ è indipendente dalla sua storia passata. In particolare, la distribuzione di probabilità corrispondente è un \emph{gaussiana con varianza $dt$}:
+\[
+dW_t \sim \mathcal N (0, dt)
+\]
+
+Questo rende a tutti gli effetti il rumore $\xi_t$ la derivata formale rispetto al tempo di $W_t$:
+\[
+dW_t = \xi(t)dt
+\]
+e permette di riscrivere l'Eq.\ref{eq:stochastic_dynamics} nella \textbf{forma differenziale stocastica (SDE)}:
+\begin{equation}
+dx(t) = a(x) dt + b(x)dW_t
+\label{SDE_diff}
+\end{equation}
+
+\subsubsection{L'integrale stocastico di Itô}
+
+Per passare alla forma finita dell'Eq. \ref{SDE_diff}, non è possibile utilizzare il classico integrale di Riemann. La natura del processo di Wiener rende infatti inapplicabile il calcolo infinitesimale standard: a causa della proprietà $\langle (dW_t)^2 \rangle = dt$, le traiettorie di $W_t$ possiedono una variazione quadratica non nulla e una variazione totale infinita. Questo porta inevitabilmente alla divergenza delle somme di integrazione definite secondo la teoria classica.
+
+Si rende quindi necessario introdurre un nuovo strumento matematico per dare senso all'integrale del termine stocastico $\int_0^t b(x(s)) dW_s$.
+
+Si definisce \textbf{integrale di Itô} il limite in media quadratica di una somma di Riemann in cui la funzione integranda è rigorosamente valutata all'estremo \emph{sinistro} (denominato \emph{pre-point}) di ogni sotto-intervallo temporale. Data una partizione dell'intervallo temporale $[0, t]$ in $N$ intervalli definiti dagli istanti $0 = t_0 < t_1 < \dots < t_N = t$, l'integrale è definito come:
+\[
+\int_0^t b(x(s)) dW_s := \lim_{\max(\Delta t_i) \to 0} \sum_{i=0}^{N-1} b(x(t_i)) \left( W_{t_{i+1}} - W_{t_i} \right)
+\]
+
+La scelta di valutare la funzione $b(x)$ all'istante iniziale $t_i$ è il fulcro del calcolo di Itô. Matematicamente, questa convenzione assicura che il termine deterministico $b(x(t_i))$ sia \emph{statisticamente indipendente} dall'incremento stocastico futuro $\Delta W_i = W_{t_{i+1}} - W_{t_i}$. Tale proprietà, nota come non-anticipatività, garantisce che l'integrale di Itô sia una martingala e mantenga un valore atteso nullo, preservando coerentemente le proprietà statistiche del rumore bianco originario.
+
+L'integrale $I(t) = \int_0^t b(x(s),s)dW_s$ ha due proprietà fondamentali:
+\begin{enumerate}
+    \item \textbf{Media nulla:} L'incremento $dW_s$ è indipendente dallo stato $x(s)$ valutato nello stesso istante, pertanto $\langle I(t) \rangle = 0$.
+    \[
+        \langle I(t) \rangle =
+        \left\langle \int_0^t b(x(s), s) dW_s \right\rangle = 0
+        \]
+    \item \textbf{Isometria di Itô:} La varianza dell'integrale stocastico è pari all'integrale temporale del quadrato dell'integranda. Sfruttando la proprietà di scorrelazione degli incrementi $\langle dW_s dW_u \rangle = \delta(s-u)ds$ (Eq. \eqref{wiener_scorr}), si ottiene:
+    \[
+    \text{Var}(I(t)) = \left\langle \left( \int_0^t b(x(s), s) dW_s \right)^2 \right\rangle = \int_0^t \langle b^2(x(s), s) \rangle ds
+    \]
+\end{enumerate}
+
+\subsubsection{Risoluzione numerica: schema di Eulero-Maruyama}
+La non differenziabilità discussa in precedenza impedisce l'uso del metodo di Eulero classico per l'integrazione numerica. Lo \textbf{schema di Eulero-Maruyama} rappresenta l'esatta traduzione discreta della prescrizione di Itô.
+
+Dall'analisi della varianza sappiamo che $\langle (\omega_{\Delta t})^2 \rangle = \epsilon^2 \Delta t$. Esprimendo questo incremento aleatorio tramite una variabile standardizzata, si ottiene l'equazione di aggiornamento numerico:
+\begin{equation}
+x_{n+1} = x_n + a(x_n, t_n)\Delta t + \epsilon \Delta W_n
+\label{eq:euler_maruyama}
+\end{equation}
+dove $\Delta W_n$ è l'\textbf{incremento del processo di Wiener}, che eredita le seguenti proprietà:
+\begin{itemize}
+    \item \textbf{Media nulla}: $\langle \Delta W_n \rangle = 0$
+    \item \textbf{Varianza}: $\langle (\Delta W_n)^2 \rangle = \Delta t$
+    \item \textbf{Incrementi indipendenti}: \ $\langle \Delta W_n \Delta W_m \rangle = \delta_{nm} \Delta t$
+    \item \textbf{Distribuzione gaussiana}: \ $\Delta W_n \sim \mathcal{N}(0, \Delta t)$
+\end{itemize}
+
+Dalla teoria delle probabilità, il momento del quarto ordine è $\langle (\Delta W_n)^4 \rangle = 3\Delta t^2$. Segue che la varianza della variabile aleatoria $(\Delta W_n)^2$ è:
+\[
+\text{Var}((\Delta W_n)^2) = 3\Delta t^2 - (\Delta t)^2 = 2\Delta t^2
+\]
+Nel limite $\Delta t \to 0$, questa varianza decade a zero come $\Delta t^2$, rendendo la convergenza di $(\Delta W_n)^2$ deterministica in senso quadratico medio. Questo porta alla regola fondamentale dell'algebra di Itô:
+\[
+(dW)^2 = dt
+\]
+\emph{Il differenziale di Wiener ha dimensioni $[T^{\frac 12}]$}, a differenza del differenziale temporale ordinario $dt$.
+
+Valutando esplicitamente i coefficienti al tempo $t_n$ (estremo sinistro), lo schema di Eulero-Maruyama approssima la SDE con una \textbf{convergenza forte di ordine 0.5} (l'errore sulla singola traiettoria scala come $\sqrt{\Delta t}$) e una \textbf{convergenza debole di ordine 1.0} (l'errore sui momenti statistici, come la media di ensemble, scala linearmente con $\Delta t$).
+
+\subsection{Random Walks}
+Si definisce \textbf{random walk} (passeggiata aleatoria) un processo con spazio e tempo discretizzati del tipo:
+\begin{equation}
+\label{eq:rw_master}
+P(x,t+\Delta t)=\frac12 P(x-\Delta x,t)+\frac12 P(x+\Delta x,t),
+\end{equation}
+ovvero:
+\begin{itemize}
+    \item l'evento a ogni istante è \emph{indipendente dagli eventi passati} (assenza di memoria, proprietà di Markov);
+    \item \emph{non è presente un termine inerziale}, a differenza della dinamica newtoniana (dinamica sovrasmorzata).
+\end{itemize}
+
+In forma più generale, la probabilità di trovarsi nello stato $k$ al tempo $t$ è definita dalla \textbf{catena di Markov}:
+\begin{equation}
+\label{eq:markov_chain}
+P(k,t)=\sum_j \Pi^{\Delta t}(k|j)\,P(j,t-\Delta t),
+\end{equation}
+dove $\Pi$ è una \textbf{matrice stocastica} (o matrice di transizione), che soddisfa rigorosamente:
+\begin{align}
+\sum_k \Pi^{\Delta t}(k|j) &= 1 \qquad \forall j,\Delta t, \label{eq:stochastic_norm}\\
+\Pi^{\Delta t}(k|j) &\in [0,1]\qquad \forall j,k,\Delta t. \label{eq:stochastic_pos}
+\end{align}
+L'Eq.~\eqref{eq:stochastic_norm} impone la conservazione della probabilità totale, mentre l'Eq.~\eqref{eq:stochastic_pos} garantisce la positività della misura. Si noti la dipendenza esplicita dal passo temporale $\Delta t$: variandolo con continuità, variano le probabilità di transizione condizionate.
+
+\subsubsection{Proprietà e spettro delle matrici stocastiche}
+Le matrici di transizione formano un \textbf{semigruppo} rispetto alla composizione temporale. Non costituiscono un gruppo poiché l'inversione temporale invertirebbe la matrice stocastica, portando potenzialmente ad entrate negative (violando l'Eq.~\eqref{eq:stochastic_pos}). Questo riflette la natura macroscopicamente irreversibile e dissipativa del processo di diffusione.
+
+\paragraph{Autovettori destri: configurazioni di probabilità}
+Gli \textbf{autovettori destri} $v^{(i)}$ di $\Pi$ (ovvero i vettori colonna tali che $\Pi v^{(i)} = \lambda_i v^{(i)}$) rappresentano le \emph{configurazioni spaziali di probabilità}. I corrispondenti autovalori $\lambda_i$ determinano i tassi di evoluzione temporale di tali configurazioni.
+Infatti, assumendo che la matrice sia diagonalizzabile, la distribuzione di probabilità iniziale del random walk si può scomporre sulla base degli autovettori destri:
+\[
+P(0) = \sum_k c_k v^{(k)}
+\]
+e la sua evoluzione temporale a un istante discreto $t$ sarà data dall'applicazione iterata della matrice:
+\begin{equation}
+P(t) = \Pi^t P(0) = \sum_k (\lambda_k)^t c_k v^{(k)}
+\label{rw_prob_distr}
+\end{equation}
+
+Lo spettro della matrice $\Pi$ è caratterizzato dalle seguenti proprietà:
+
+\begin{itemize}
+    \item \textbf{Esistenza di uno stato stazionario (Punto fisso):} Esiste sempre almeno un autovalore massimo $\lambda_1 = 1$. L'autovettore destro associato $p^0$ è lo \textbf{stato stazionario} della catena:
+    \[
+    p^0_k = \sum_j \Pi_{kj} p_j^0
+    \]
+    in quanto è invariante per traslazioni temporali ($1^t = 1$). Il Teorema di Perron-Frobenius garantisce che le componenti di $p^0$ siano tutte non negative, rendendolo una distribuzione di probabilità fisica.
+    
+    \item \textbf{Limitatezza dello spettro:} Tutti gli autovalori di una matrice stocastica giacciono all'interno o sul bordo del disco di raggio unitario nel piano complesso:
+    \[
+    |\lambda_m| \leq 1 \qquad \forall m
+    \]
+    L'assenza di autovalori con modulo maggiore di 1 garantisce che le probabilità non divergano all'infinito.
+\end{itemize}
+
+Queste due proprietà garantiscono che lo stato stazionario $p^0$ sia l'unica configurazione a cui il sistema rilassa asintoticamente per $t\to \infty$. Tutti gli altri termini in Eq.~\eqref{rw_prob_distr}, avendo $|\lambda_k| < 1$, decadono a zero.
+
+Questi autovettori secondari formano uno spazio complementare allo stato stazionario e rappresentano i \textbf{modi di decadimento} o \emph{fluttuazioni transienti} della probabilità. Lo studio del \emph{gap spettrale} (la distanza tra $\lambda_1=1$ e il secondo autovalore per modulo $|\lambda_2|$) fornisce la scala temporale di rilassamento del sistema verso l'equilibrio: un gap ristretto indica una convergenza lenta e una forte sensibilità alle perturbazioni.
+
+\paragraph{Autovettori sinistri e leggi di conservazione}
+Gli \textbf{autovettori sinistri} $u^{(i)}$ di $\Pi$ (vettori riga tali che $u^{(i)}\Pi = \lambda_i u^{(i)}$) sono in generale diversi da quelli destri perché $\Pi \ne \Pi^T$. Fisicamente, essi rappresentano le \emph{leggi di conservazione} o le caratteristiche globali del sistema (una colonna di $\Pi$ è data dalle probabilità di transizione da uno stato fissato a tutti gli altri, la cui somma deve essere 1). 
+
+\textbf{Ortogonalità dei transienti}
+L'equazione di conservazione della probabilità totale (Eq.~\eqref{eq:stochastic_norm}) implica esplicitamente che il vettore riga $v_L = (1, 1, \dots, 1)$ sia l'autovettore sinistro associato a $\lambda=1$. 
+Dall'algebra lineare, autovettori sinistri e destri associati ad autovalori distinti sono ortogonali. Di conseguenza, tutti gli autovettori destri transienti $v^{(m)}$ (con $\lambda_m \neq 1$) devono essere ortogonali a $v_L$. Questo impone che la somma delle loro componenti sia identicamente nulla:
+\[
+\sum_j v^{(m)}_j = 0 \qquad \forall m > 1
+\]
+Ciò conferma che i modi transienti non sono distribuzioni di probabilità, ma puri scambi a somma nulla (flussi) tra stati diversi.
+
+\subsection{Limite continuo deterministico: equazione di Liouville}
+\label{liouville}
+Nella realtà, ogni osservazioni di processo fisico è limitato dall'incertezza sulla sua misura.
+Nel caso di caos molecolare, le traiettorie differiscono molto nel tempo da condizioni iniziali simili -> il sistema è intrinsecamente impredicibile.
+In qeusto caso devo adottare un approccio coarse-grained, ovvero non considero pià singole traiettorie $P(x)=\delta(x-x_0)$ ben definite, ma un iniseme di possibilie traiettorie. Quello che voglio ottenere è quindi una equazione globale, che consiera la STRUTTURA del'INTERO spazio <- posso scrivere condizioni al contorno.
+
+In un sistema deterministico descritto localmente da
+\[
+\dot x = a(x),
+\]
+la densità di probabilità evolve secondo l’\textbf{equazione di Liouville}:
+\begin{equation}
+\label{eq:liouville}
+\frac{\partial P}{\partial t}(t,x)
+=-\frac{\partial}{\partial x}\!\left[a(x)P(t,x)\right].
+\end{equation}
+
+Essa equivale a un’equazione di continuità per la probabilità:
+\[
+\frac{\partial P}{\partial t}=-\nabla J,
+\qquad J=\dot x\,P.
+\]
+
+\subsection{Limite continuo stocastico: equazione di Fokker--Planck}
+
+Assumiamo come \emph{ipotesi di lavoro} che \emph{$P(x,t)$ sia derivabile rispetto a spazio e tempo}.  
+Possiamo allora sviluppare in serie di Taylor l’equazione~\eqref{eq:rw_master} attorno a $(x,t)$, separatamente a LHS (rispetto al tempo) e a RHS (rispetto allo spazio):
+\begin{equation}
+\label{eq:taylor}
+P(x,t) + \frac{\delta P}{\delta t}(x,t)\Delta t + o(t)
+= P(x,t)
++\frac{\partial P}{\partial t}\Delta t
++\frac12\frac{\partial^2 P}{\partial x^2}(\Delta x)^2
++o((\Delta x)^2).
+\end{equation}
+perché le derivate prime a RHS si elidono a vicenda.
+
+Nel limite continuo (TLC) trascuriamo i termini $o(\Delta t)$ e, confrontando con \eqref{eq:rw_master}, otteniamo
+\begin{equation}
+\label{eq:diff_limit}
+\frac{\partial P}{\partial t}(t,x)
+=\frac12\frac{\partial^2 P}{\partial x^2}(t,x)\,
+\frac{(\Delta x)^2}{\Delta t}.
+\end{equation}
+
+Affinché il membro sinistro sia finito e non nullo nel limite $\Delta t\to 0$, deve valere
+\begin{equation}
+\label{eq:scaling}
+(\Delta x)^2 \sim \Delta t, \qquad \Delta t\to 0.
+\end{equation}
+
+Definiamo quindi il \textbf{coefficiente di diffusione}
+\begin{equation}
+\label{eq:diff_coeff}
+D := \lim_{\Delta t\to 0}\frac{(\Delta x)^2}{\Delta t}.
+\end{equation}
+
+Segue l’equazione di \textbf{Fokker--Planck (di diffusione)}
+\begin{equation}
+\label{eq:fokker_planck}
+\frac{\partial P}{\partial t}(t,x)
+=\frac{D}{2}\frac{\partial^2 P}{\partial x^2}(t,x).
+\end{equation}
+
+A differenza di Liouville, l’equazione di FP \underline{non mantiene tutte le correlazioni della dinamica classica}, facendo uso del teorema del limite centrale.
+
+\underline{L’equazione~\eqref{eq:fokker_planck} implica}
+\begin{equation}
+\label{eq:infinite_velocity}
+\lim_{\Delta t\to 0}\frac{\Delta x}{\Delta t}=+\infty,
+\end{equation}
+cioè la velocità fisica non è definibile.
+
+Il random walk è quindi una descrizione \underline{efficace e non fondamentale}: descrive l’evoluzione di distribuzioni di probabilità e non traiettorie microscopiche.  
+A livello matematico, ciò equivale a dire che \underline{le traiettorie del random walk sono ovunque non derivabili}.
+
+\subsubsection{Soluzione della Fokker--Planck}
+\label{FP_solution}
+
+L’equazione~\eqref{eq:fokker_planck} è risolvibile imponendo:
+\begin{itemize}
+    \item \emph{condizione iniziale determinata}
+    \[
+    P(0,x)=\delta(x-x_0);
+    \]
+    \item \emph{condizioni al contorno aperte}.
+    \item \emph{sistema 1D}
+\end{itemize}
+
+La soluzione è una distribuzione gaussiana centrata in $x_0$:
+\begin{equation}
+\label{eq:gaussian_solution}
+P(x,t)=\frac{1}{\sqrt{2\pi Dt}}
+\exp\!\left[-\frac{(x-x_0)^2}{2Dt}\right].
+\end{equation}
+
+
+\emph{Dimostrazione.}  
+Conviene passare alla trasformata di Fourier di $P(t,x)$ rispetto a $x$, sfruttando il fatto che:
+\[
+\mathcal F \left(\frac{d^n P}{dx^n}(x)\right) = (ik)^2 \mathcal F(P(x))
+\]
+Questo si dimostra facilmente ricordando che 
+\[
+\mathcal F \left(f(x)\right)(k) = \int_{-\infty}^{+\infty} f(x) e^{-ikx} dx
+\]
+e integrando per parti.
+
+Risolvendo l'equazione per la trasformata di Fourier
+
+Si noti che l'equazione è lineare, e infatti la sua soluzione è invariante per somma. 
+
+\underline{La varianza cresce linearmente nel tempo}:
+\begin{equation}
+\label{eq:variance}
+\sigma^2(t)=\langle (x-\langle x\rangle)^2\rangle = Dt.
+\end{equation}
+
+
+\subsubsection{Fokker--Planck e principio di massima entropia}
+
+Consideriamo l’entropia di Gibbs del sistema a tempo fissato $t$:
+\begin{equation}
+\label{eq:gibbs_entropy}
+S_G(t)=-\int dx\, p(x,t)\ln p(x,t).
+\end{equation}
+
+Derivando rispetto al tempo:
+\begin{equation}
+\label{eq:entropy_derivative}
+\frac{dS_G}{dt}
+=-\int dx\,\frac{\partial p}{\partial t}\ln p
+-\int dx\,\frac{\partial p}{\partial t}.
+\end{equation}
+
+Il secondo termine si annulla poiché la probabilità totale è normalizzata (scambiando derivata e integrale).  
+Sostituendo la Fokker--Planck~\eqref{eq:fokker_planck} nel primo termine:
+\begin{equation}
+\label{eq:entropy_fp}
+\frac{dS_G}{dt}
+=-\frac{D}{2}\int dx\,\frac{\partial^2 p}{\partial x^2}\ln p.
+\end{equation}
+
+Integrando per parti:
+\[
+\left[ \frac{\delta p}{\delta x} \ln p \right]_x= \int_x \frac{\delta^2 p}{\delta x^2} \ln p dx + \int_x \frac{\delta p}{\delta x} \frac 1p \frac{\delta p}{\delta x}
+\] 
+e usando le condizioni al contorno ($p,\partial_x p \to 0$ per $|x|\to\infty$), si ottiene
+\begin{equation}
+\label{eq:entropy_production}
+\frac{dS_G}{dt}
+=\frac{D}{2}\int dx\,\frac{(\partial_x p)^2}{p}\ge 0.
+\end{equation}
+
+\underline{La dinamica di Fokker--Planck soddisfa un principio di aumento dell’entropia}.  
+L’irreversibilità emerge dall’introduzione di una dinamica coarse-grained.
+
+
+\subsubsection{Fokker--Planck in forma operatoriale}
+
+Dall’equazione di Fokker--Planck~\eqref{eq:fokker_planck} si riconosce una struttura formale analoga a quella dell’equazione di Schrödinger (in tempo immaginario).
+
+Introduciamo l’operatore
+\begin{equation}
+\label{eq:fp_operator}
+\mathbf{P} := \frac{D}{2}\frac{\partial^2}{\partial x^2},
+\end{equation}
+così che l’evoluzione temporale della distribuzione di probabilità $p(x,t)$ sia scritta come
+\begin{equation}
+\label{eq:fp_operatorial}
+\frac{\partial p}{\partial t} = \mathbf{P}\,p .
+\end{equation}
+
+Qui $p(x,t)$ è una \emph{densità di probabilità}, normalizzata a ogni istante:
+\[
+\int dx\, p(x,t)=1.
+\]
+
+\paragraph{Struttura di spazio di Hilbert}
+
+Consideriamo lo spazio $L^2$, dotato del prodotto scalare
+\begin{equation}
+\label{eq:l2_inner}
+\langle f,g\rangle_2 := \int dx\, f^*(x)\,g(x),
+\end{equation}
+dove le funzioni sono \emph{quadrato-integrabili}.  
+Questo garantisce che la norma sia finita e rende ben definita l’analisi spettrale dell’operatore.
+
+\paragraph{Proprietà di hermiticità}
+
+\underline{L’operatore $\mathbf{P}$ è hermitiano in $L^2$}:
+\begin{equation}
+\label{eq:hermitian}
+\langle \mathbf{P}f, g\rangle_2 = \langle f, \mathbf{P}g\rangle_2,
+\qquad \mathbf{P}=\mathbf{P}^\dagger.
+\end{equation}
+
+\emph{Dimostrazione.}  
+Scriviamo esplicitamente
+\[
+\langle f,\mathbf{P}g\rangle
+= \frac{D}{2}\int dx\, f^*(x)\,\frac{d^2 g}{dx^2}.
+\]
+Integrando per parti una prima volta:
+\[
+\int f^* g'' dx
+= \left[f^* g'\right]_{-\infty}^{+\infty}
+- \int (f^*)' g' dx.
+\]
+Il termine di bordo si annulla per le condizioni al contorno aperte
+($f,g,\partial_x f,\partial_x g\to 0$ per $|x|\to\infty$).  
+Integrando per parti una seconda volta:
+\[
+- \int (f^*)' g' dx
+= -\left[(f^*)' g\right]_{-\infty}^{+\infty}
++ \int (f^*)'' g dx.
+\]
+Anche il secondo termine di bordo si annulla, quindi
+\[
+\langle f,\mathbf{P}g\rangle
+= \frac{D}{2}\int dx\, (f^*)'' g
+= \langle \mathbf{P}f, g\rangle.
+\]
+\hfill $\square$
+
+\paragraph{Autovalore nullo}
+Se sono in un \emph{dominio chiuso} per le funzioni (es: $[-L/2, L/2]$),
+\underline{l’operatore $\mathbf{P}$ possiede sicuramente un autovalore nullo}.  
+La corrispondente autofunzione è la funzione costante (identità) $\mathbb{I}(x)=1$ (l'ipotesi di dominio chiuso serve per mantenere la quadrato sommabilità per $\mathbb I$). 
+
+\emph{Dimostrazione.}  
+La normalizzazione della probabilità implica
+\begin{equation}
+\label{eq:prob_cons}
+0=\frac{d}{dt}\int dx\,p(x,t).
+\end{equation}
+Usando l’equazione operatoriale~\eqref{eq:fp_operatorial}:
+\[
+0=\int dx\,\mathbf{P}p
+= \langle \mathbb{I},\mathbf{P}p\rangle_2.
+\]
+Poiché $\mathbf{P}$ è hermitiano,
+\[
+\langle \mathbb{I},\mathbf{P}p\rangle_2
+= \langle \mathbf{P}\mathbb{I}, p\rangle_2.
+\]
+Dato che questa relazione vale per \emph{ogni} $p$, segue necessariamente
+\begin{equation}
+\label{eq:zero_mode}
+\mathbf{P}\mathbb{I}=0.
+\end{equation}
+\hfill $\square$
+
+\paragraph{Autofunzioni e spettro}
+\label{autofunc_FP}
+
+Cerchiamo soluzioni separabili della forma
+\begin{equation}
+\label{eq:separable}
+p(x,t)=e^{-\lambda t} f_\lambda(x),
+\end{equation}
+dove $f_\lambda$ è un’autofunzione di $\mathbf{P}$.  
+Inserendo in~\eqref{eq:fp_operatorial}:
+\[
+-\lambda f_\lambda
+= \frac{D}{2}\frac{d^2 f_\lambda}{dx^2}.
+\]
+Otteniamo l’equazione agli autovalori
+\begin{equation}
+\label{eq:eigenvalue_problem}
+\frac{d^2 f_\lambda}{dx^2}
+= -\frac{2\lambda}{D} f_\lambda.
+\end{equation}
+
+\underline{Le autofunzioni di $\mathbf{P}$ sono funzioni trigonometriche}.  
+Infatti, la soluzione generale di~\eqref{eq:eigenvalue_problem} è
+\[
+f_\lambda(x)=A\sin(kx)+B\cos(kx),
+\qquad k=\sqrt{\frac{2\lambda}{D}}.
+\]
+
+Queste funzioni:
+\begin{itemize}
+    \item hanno \underline{media nulla} (eccetto il modo costante);
+    \item sono \underline{periodiche};
+    \item descrivono i modi di rilassamento della distribuzione.
+\end{itemize}
+
+\paragraph{Dominio chiuso e quantizzazione}
+
+Se il dominio è \emph{chiuso} (ad esempio condizioni periodiche), devono valere condizioni al contorno del tipo
+\[
+f_\lambda(x+L)=f_\lambda(x).
+\]
+Questo impone
+\begin{equation}
+\label{eq:quantization}
+k=\frac{2\pi n}{L}
+\qquad \Longrightarrow \qquad
+\lambda_n=\frac{D}{2}\left(\frac{2\pi n}{L}\right)^2,
+\qquad n\in\mathbb{Z}.
+\end{equation}
+
+\underline{Lo spettro degli autovalori è quindi discreto}, in analogia con la quantizzazione che emerge nell’equazione di Schrödinger.
+
+\subsubsection{Altri regimi di diffusione}
+
+\paragraph{Diffusione anomala}
+\begin{equation}
+\label{eq:anomalous_diffusion}
+\langle (x-\langle x\rangle)^2\rangle = Dt^\alpha,
+\qquad 1\le \alpha \le 2.
+\end{equation}
+Si distinguono:
+\begin{itemize}
+    \item $\alpha=1$: diffusione normale (caso Fokker--Planck);
+    \item $\alpha=2$: moto balistico (dinamica deterministica).
+\end{itemize}
+
+Compare quando sono presenti \underline{più scale temporali} nella dinamica (traffico, epidemie, sistemi economici).
+
+\paragraph{Regimi subdiffusivi}
+\begin{equation}
+\label{eq:subdiffusion}
+\langle (x-\langle x\rangle)^2\rangle = Dt^\alpha,
+\qquad \alpha<1.
+\end{equation}
+
+Sono interpretabili come \textbf{CTRW} (continuous time random walks) con tempi di attesa a code pesanti, che producono varianza infinita.  
+Un esempio fisico è la diffusione nel citoplasma di cellule vive.
+
+\subsection{Introduzione del termine dissipativo}
+
+Consideriamo un random walk nello spazio dei momenti $p$, tale che:
+\begin{itemize}
+    \item \emph{$\langle \Delta p\rangle = 0$};
+    \item \emph{$\langle (\Delta p)^2\rangle$ finito}.
+\end{itemize}
+
+Nel limite continuo, la densità di probabilità $\rho(p,t)$ soddisfa la Fokker--Planck puramente diffusiva:
+\begin{equation}
+\label{eq:fp_momentum}
+\frac{\partial \rho}{\partial t}
+= \frac{D}{2}\frac{\partial^2 \rho}{\partial p^2}.
+\end{equation}
+
+Sotto le ipotesi discusse nella sezione~\ref{FP_solution}, la soluzione è una gaussiana con varianza
+\begin{equation}
+\label{eq:var_pure_diff}
+\sigma^2(t)
+= \langle (p-\langle p\rangle)^2\rangle
+= Dt.
+\end{equation}
+
+Poiché $\langle p\rangle=0$ per ipotesi, segue
+\begin{equation}
+\label{eq:p2_growth}
+\langle p^2\rangle = Dt.
+\end{equation}
+
+\emph{Questo risultato non può avere senso fisico}: la varianza cresce indefinitamente e il sistema non raggiunge mai uno stato stazionario.
+
+Introduciamo la temperatura $T$ come misura dell’energia media del sistema. Per il principio di equipartizione:
+\begin{equation}
+\label{eq:equipartition}
+\left\langle \frac{p^2}{2m}\right\rangle
+= \langle E\rangle
+= \frac{1}{2}k_B T,
+\end{equation}
+da cui
+\begin{equation}
+\label{eq:p2_temperature}
+\langle p^2\rangle = m k_B T.
+\end{equation}
+
+Confrontando~\eqref{eq:p2_growth} e~\eqref{eq:p2_temperature}, si vede che anche la temperatura crescerebbe indefinitamente nel tempo.  
+
+\underline{Il problema è l’assenza di dissipazione}.
+
+\subsubsection{Introduzione dell’attrito}
+
+Il problema si risolve introducendo un termine dissipativo (attrito lineare), assumendo una dinamica media del tipo
+\begin{equation}
+\label{eq:friction}
+\dot p = -\gamma p,
+\end{equation}
+dove $\gamma>0$ è il coefficiente di dissipazione.
+
+Nel caso deterministico, la densità di probabilità evolve secondo l’equazione di Liouville (cfr. sezione~\ref{liouville}):
+\begin{equation}
+\label{eq:liouville_p}
+\frac{\partial \rho}{\partial t}(p,t)
+= \gamma \frac{\partial}{\partial p}\!\left[p\,\rho(p,t)\right].
+\end{equation}
+
+Combinando questo termine con la diffusione stocastica, otteniamo la \textbf{Fokker--Planck dissipativa} (FPD), valida anche fuori equilibrio:
+\begin{equation}
+\label{eq:fp_dissipative}
+\frac{\partial \rho}{\partial t}(p,t)
+= \frac{D}{2}\frac{\partial^2 \rho}{\partial p^2}(p,t)
++ \gamma \frac{\partial}{\partial p}\!\left[p\,\rho(p,t)\right].
+\end{equation}
+
+\underline{L’equazione rimane lineare}, quindi invariabile per combinazione lineare delle soluzioni.
+
+\subsubsection{Relazione di Einstein}
+
+All’equilibrio imponiamo
+\begin{equation}
+\label{eq:stationary_condition}
+\frac{\partial \rho}{\partial t}=0.
+\end{equation}
+
+Poiché lo stato di equilibrio deve essere unico, imponiamo direttamente che l’argomento dell’equazione~\eqref{eq:fp_dissipative} sia nullo:
+\begin{equation}
+\label{eq:stationary_fp}
+\frac{D}{2}\frac{\partial^2 \rho}{\partial p^2}
++ \gamma \frac{\partial}{\partial p}(p\rho)=0.
+\end{equation}
+
+Integrando una volta rispetto a $p$ e imponendo condizioni al contorno aperte:
+\begin{equation}
+\label{eq:log_derivative}
+\frac{1}{\rho}\frac{\partial \rho}{\partial p}
+= -\frac{2\gamma}{D}p
+= \frac{\partial}{\partial p}\ln \rho.
+\end{equation}
+
+La soluzione è una gaussiana:
+\begin{equation}
+\label{eq:gaussian_eq}
+\rho_{\mathrm{eq}}(p)
+= A \exp\!\left(-\frac{\gamma}{D}p^2\right),
+\end{equation}
+dove $A$ è una costante di normalizzazione.
+
+Scrivendo~\eqref{eq:gaussian_eq} in forma standard:
+\begin{equation}
+\label{eq:gaussian_standard}
+\rho_{\mathrm{eq}}(p)
+= A \exp\!\left(-\frac{p^2}{2\sigma^2}\right),
+\qquad
+\sigma^2=\frac{D}{2\gamma}.
+\end{equation}
+
+Confrontando con~\eqref{eq:p2_temperature}, otteniamo la \textbf{relazione di Einstein}:
+\begin{equation}
+\label{eq:einstein_relation}
+D = 2\gamma m k_B T.
+\end{equation}
+
+\underline{Il coefficiente di diffusione è direttamente legato alla temperatura}.  
+Misurando la dissipazione e le fluttuazioni del sistema stocastico, si ottiene informazione termodinamica.
+
+\subsubsection{Connessione con la meccanica statistica}
+
+Riscrivendo~\eqref{eq:gaussian_eq} in termini dell’energia cinetica $E=p^2/(2m)$:
+\begin{equation}
+\label{eq:maxwell_boltzmann}
+\rho_{\mathrm{eq}}(p)
+= A \exp\!\left(-\frac{E}{k_B T}\right),
+\end{equation}
+che coincide con la distribuzione di \underline{Maxwell--Boltzmann}.
+
+Questa distribuzione è nota per massimizzare l’entropia di Gibbs~\eqref{eq:gibbs_entropy} a energia media fissata.  
+
+\emph{La meccanica statistica emerge quindi come limite di equilibrio di una dinamica dissipativa}.  
+Questo risultato è una manifestazione dei \emph{teoremi di fluttuazione--dissipazione}, che collegano dinamica stocastica, dissipazione ed equilibrio termodinamico.
+
+In effetti, un assunzione implicita che si fa in mecc. statistica quando si ricava la MB è di \textbf{sistema markoviano}, in quanto si impone che gli urti tra le particelle siano indipendenti dalla loro storia passata (ipotesi che cade se si ha distanza media tra gli urti $\lambda<\lambda_{dB}$, in tal caso si entra infatti in regime MQ).
+
+\subsection{Traiettoria per singola particella: equazione di Ornstein--Uhlenbeck}
+Con l’approccio \emph{coarse--grained} adottato (Eq.~\eqref{eq:liouville}), non siamo in grado di seguire la traiettoria di una singola particella, ma solo le proprietà statistiche macroscopiche del sistema.
+
+Per passare a una descrizione microscopica, impostiamo un’equazione differenziale stocastica che includa sia la dinamica dissipativa (attrito viscoso) sia un termine di fluttuazione stocastica nella forma di Langevin (Eq.~\eqref{eq:langevin}):
+\begin{equation}
+\label{eq:sde_general}
+dp = -\gamma p(t)\,dt + \epsilon\,dW_t
+\end{equation}
+
+Integrando analiticamente secondo il calcolo di Itô (Eq.~\eqref{eq:ito_integral}):
+\[
+p(t) = \underbrace{p_0 e^{-\gamma t}}_{\text{Soluzione omogenea}} + \underbrace{\epsilon \int_0^t e^{-\gamma (t-s)} dW_s}_{\text{Integrale di Itô}}
+\]
+Ricordando le proprietà dell'integrale stocastico, si calcolano i primi due momenti statistici.
+Il valore medio è dominato unicamente dalla componente omogenea, poiché l'integrale di Itô ha media nulla:
+\[
+\langle p(t)\rangle = p_0 e^{-\gamma t}
+\]
+Per $t \to \infty$, il sistema perde memoria della condizione iniziale e $\langle p(t)\rangle \to 0$.
+
+La varianza si calcola sfruttando l'isometria di Itô. Esprimendo il prodotto dei differenziali in termini della delta di Dirac $\langle dW_s dW_u \rangle = \delta(s-u)\,ds\,du$:
+\[
+\langle p^2(t) \rangle = 
+\epsilon^2 \int_0^t \int_0^t e^{-\gamma (t-s)} e^{-\gamma (t-u)} \delta(s-u)\,ds\,du
+\]
+Integrando su $u$, la delta di Dirac collassa l'integrale doppio in un integrale singolo:
+\[
+\langle p^2(t) \rangle = 
+\epsilon^2 \int_0^t e^{-2\gamma (t-s)} ds = 
+\frac{\epsilon^2}{2\gamma}\left[1 - e^{-2\gamma t}\right] 
+\]
+Al limite di rilassamento termodinamico ($t\to \infty$), la varianza raggiunge un asintoto costante:
+\[
+\sigma_p^2 = \lim_{t \to \infty} \langle p^2(t) \rangle = \frac{\epsilon^2}{2\gamma}
+\]
+
+Affinché la dinamica microscopica della singola particella sia coerente con la meccanica statistica all'equilibrio termico, lo stato stazionario deve riprodurre la distribuzione di Maxwell--Boltzmann. Per Eq. \eqref{eq:gaussian_standard}, deve essere
+\[
+\sigma_p^2 = \frac D{2\gamma} \implies \epsilon^2 = D
+\]
+Sfruttando l'equazione di Einstein (Eq. \eqref{eq:einstein_relation}) per $D$, si ottiene  l'\textbf{equazione di Ornstein--Uhlenbeck}:
+\begin{equation}
+\label{eq:ornstein_uhlenbeck}
+dp = -\gamma p(t)\,dt + \sqrt{2\gamma m k_B T}\,dW_t
+\end{equation}
+
+Essa descrive un processo stocastico markoviano ergodico, in cui la competizione tra dissipazione ($\gamma$) e fluttuazione termica fissa la larghezza della distribuzione stazionaria, descrivendo esplicitamente l'andamento della velocità nel moto browniano a una data temperatura $T$.
+
+\subsubsection{Spettro di potenza}
+Consideriamo il processo stocastico descritto dall'equazione:
+\[
+dx = -\gamma x dt + dW_t
+\]
+Assumiamo che $x(t)$ descriva un \underline{processo stazionario} (le cui proprietà statistiche sono invarianti per traslazioni temporali). 
+
+Possiamo esprimere la traiettoria $x(t)$ nel dominio delle frequenze tramite la sua trasformata di Fourier:
+\[
+x(t) = \int_{-\infty}^{+\infty} e^{i\omega t} a(\omega) d\omega
+\]
+dove le ampiezze $a(\omega)$ sono esse stesse delle variabili aleatorie (complesse). Per un processo stazionario \underline{a media nulla}, queste ampiezze soddisfano le seguenti proprietà statistiche:
+\begin{itemize}
+    \item \textbf{Media nulla}: $\langle a(\omega) \rangle = 0$
+    \item \textbf{Componenti in frequenza indipendenti}: $\langle a(\omega) \bar{a}(\omega') \rangle = \Pi(\omega) \delta(\omega-\omega')$
+\end{itemize}
+dove $\bar{a}$ indica il complesso coniugato. La presenza della delta di Dirac $\delta(\omega-\omega')$ è la firma matematica della stazionarietà del processo. 
+La funzione $\Pi(\omega)$ definisce il \textbf{Power Spectrum} (spettro di potenza) del processo, e rappresenta il valore atteso del modulo quadro delle ampiezze: $\langle |a(\omega)|^2 \rangle = \Pi(\omega)$.
+
+Vogliamo ora legare questo spettro di potenza alla \textbf{funzione di autocorrelazione} temporale $C(\tau)$, definita come:
+\[
+C(\tau) = \langle x(t+\tau) x(t) \rangle
+\]
+(dove $C(\tau) \neq 0$ indica presenza di correlazione temporale, mentre $C(\tau) = 0$ indica assenza di correlazione).
+
+Sostituendo l'espressione di $x(t)$ in trasformata di Fourier all'interno del valore atteso (e ricordando che per un segnale reale $x(t) = \bar{x}(t)$), otteniamo:
+\[
+\langle x(t+\tau) x(t) \rangle = \left\langle \int e^{i\omega(t+\tau)} a(\omega) d\omega \int e^{-i\omega' t} \bar{a}(\omega') d\omega' \right\rangle
+\]
+Sfruttando la linearità dell'operatore di media, possiamo portarlo all'interno degli integrali:
+\[
+= \iint e^{i\omega(t+\tau)} e^{-i\omega' t} \langle a(\omega) \bar{a}(\omega') \rangle d\omega d\omega'
+\]
+Inserendo la proprietà di stazionarietà $\langle a(\omega) \bar{a}(\omega') \rangle = \Pi(\omega) \delta(\omega-\omega')$, l'integrazione rispetto a $\omega'$ collassa istantaneamente a causa della delta di Dirac (imponendo $\omega' = \omega$):
+\[
+C(\tau) = \int e^{i\omega(t+\tau)} e^{-i\omega t} \Pi(\omega) d\omega
+\]
+I termini dipendenti dal tempo assoluto $t$ si elidono ($e^{i\omega t} e^{-i\omega t} = 1$), dimostrando che la correlazione dipende effettivamente solo dall'intervallo $\tau$. Rimane quindi:
+\[
+C(\tau) = \int_{-\infty}^{+\infty} e^{i\omega\tau} \Pi(\omega) d\omega
+\]
+Si è ottenuto quindi che \emph{la funzione di autocorrelazione $C(\tau)$ e lo spettro di potenza $\Pi(\omega)$ sono una coppia di trasformate di Fourier}. 
+Come corollario, nel caso limite di un \emph{white noise}, il suo spettro di potenza $\Pi(\omega)$ risulta essere una costante: il rumore bianco contiene tutte le frequenze con la stessa ampiezza.
+
+\subsubsection{Integreazione numerica di Ornstein--Uhlenbeck}
+Se applichiamo il processo di Ornstein--Uhlenbeck alla variabile spaziale $x$ (notando che per un potenziale armonico $V(x) = \frac{1}{2}\gamma x^2$, si ha $\dot V(x)= \gamma x$) l'equazione di Langevin è:
+\begin{equation}
+\label{eq:ou_position}
+dx = -\gamma x\, dt + \sqrt{2T\gamma}\, dW_t.
+\end{equation}
+
+Per integrare numericamente questa equazione si utilizza lo schema di \textbf{Eulero--Maruyama} (Eq. \eqref{eq:euler_maruyama}). Discretizzando il tempo con passo $\Delta t$, si ottiene:
+\begin{equation}
+x(t+\Delta t) = x(t) - \gamma x(t)\Delta t + \sqrt{2T\gamma}\, \Delta W_t.
+\end{equation}
+L'incremento stocastico $\Delta W_t$ viene campionato a ogni passo da una distribuzione gaussiana con:
+\[
+\langle \Delta W_t \rangle = 0, \qquad \langle (\Delta W_t)^2 \rangle = \Delta t.
+\]
+Si noti che l'integrazione numerica stocastica \underline{non riproduce la singola traiettoria fisica} (che è impredicibile per natura), ma permette, campionando molte traiettorie, di ricostruire l'evoluzione della densità di probabilità $\rho(x,t)$. 
+
+Fisicamente, l'equazione~\eqref{eq:ou_position} descrive una particella confinata in una buca di potenziale elastica $V(x)$ e sottoposta all'agitazione termica. La sua soluzione stazionaria è la distribuzione di Boltzmann:
+\[
+\rho_{\mathrm{eq}}(x) = A \exp\!\left( - \frac{\gamma x^2}{2T} \right) = A \exp\!\left( - \frac{V(x)}{T} \right).
+\]
+
+
+\subsubsection{Limite sovrasmorzato ed Equazione di Smoluchowski}
+
+Consideriamo ora la dinamica completa nello spazio delle fasi $(x,p)$ per una particella in un potenziale generico $V(x)$:
+\begin{align}
+dx &= \frac{p}{m} dt \label{eq:phase_x} \\
+dp &= -\frac{dV}{dx} dt - \gamma p\, dt + \sqrt{2m\gamma T}\, dW_t. \label{eq:phase_p}
+\end{align}
+
+Si osserva una netta \textbf{separazione delle scale temporali}: il momento $p$ rilassa verso l'equilibrio su tempi rapidi governati da $\gamma$, mentre la posizione $x$ evolve lentamente a causa dell'inerzia termomeccanica data dalla massa $m$.
+
+Introduciamo un nuovo tempo adimensionale caratteristico per le dinamiche lente:
+\[
+d\tau = \frac{dt}{m\gamma}.
+\]
+Riscrivendo l'equazione per $dp$ in funzione di $\tau$ (dividendo tutto per $m\gamma$ e sfruttando la~\eqref{eq:phase_x}):
+\begin{equation}
+\label{eq:rescaled_dp}
+\frac{dp}{m\gamma} = -\frac{dV}{dx} d\tau - dx + \sqrt{2T}\, dW_\tau,
+\end{equation}
+dove l'incremento di Wiener è stato opportunamente riscalato per la nuova unità di misura temporale.
+
+Nel \textbf{limite di forte attrito} (o limite \emph{overdamped}, per $m\gamma \to \infty$), il termine inerziale diventa trascurabile ($\frac{dp}{m\gamma} \to 0$). Imponendo questa condizione nella~\eqref{eq:rescaled_dp}, otteniamo un'equazione stocastica unicamente per la posizione:
+\begin{equation}
+\label{eq:overdamped_langevin}
+dx = -\frac{dV}{dx} d\tau + \sqrt{2T}\, dW_\tau.
+\end{equation}
+
+Passando al limite continuo per le distribuzioni di probabilità, all'equazione~\eqref{eq:overdamped_langevin} è associata la corrispondente equazione di Fokker--Planck, nota come \textbf{Equazione di Smoluchowski}:
+\begin{equation}
+\label{eq:smoluchowski}
+\frac{\partial \rho}{\partial \tau}(x,\tau) = \frac{\partial}{\partial x} \!\left( \frac{dV}{dx} \rho(x,\tau) \right) + T \frac{\partial^2 \rho}{\partial x^2}(x,\tau).
+\end{equation}
+
+Questa equazione esprime la competizione tra due forze:
+\begin{itemize}
+    \item Il \textbf{drift deterministico} (primo termine): spinge il sistema a minimizzare il potenziale (metodo del \emph{steepest descent}). Se $T \to 0$, la probabilità collassa in una delta di Dirac in corrispondenza del minimo locale del potenziale.
+    \item La \textbf{diffusione termica} (secondo termine governato da $T$): agisce come forza di sparpagliamento, garantendo che il sistema non resti intrappolato per sempre in minimi locali e permettendo il raggiungimento dell'equilibrio globale di Boltzmann.
+\end{itemize}
+\subsubsection{Equilibrio e minimizzazione dell'energia libera}
+
+Si può dimostrare che questa dinamica (equazione~\eqref{eq:smoluchowski}) massimizza l'entropia minimizzando l'energia libera di Helmholtz $F = U - TS$ (poiché il sistema è a contatto con un termostato a temperatura $T$ fissata, la quantità da minimizzare non è l'energia interna).
+
+Per trovare l'equilibrio, dobbiamo imporre la stazionarietà:
+\begin{equation}
+\label{eq:smol_stat}
+\frac{\partial \rho}{\partial \tau} = 0 \implies \frac{\partial}{\partial x} \!\left( \frac{dV}{dx}\rho + T\frac{\partial \rho}{\partial x} \right) = 0.
+\end{equation}
+
+Si noti che, coerentemente a quanto visto per l'equazione di Liouville (cfr. sezione~\ref{eq:liouville}), il membro destro dell'equazione~\eqref{eq:smoluchowski} equivale a $-\nabla J$ (ovvero $-\partial_x J$ in una dimensione), dove $J$ è la \textbf{corrente di probabilità}:
+\begin{equation}
+\label{eq:prob_current}
+J(x) = -\left( \frac{dV}{dx}\rho + T\frac{\partial \rho}{\partial x} \right).
+\end{equation}
+
+Imporre l'equazione~\eqref{eq:smol_stat} equivale a richiedere che $J(x) = C$ in tutto il dominio. Tuttavia, affinché la probabilità sia normalizzabile, ai bordi del dominio all'infinito deve valere $\rho \to 0$ e $\partial_x \rho \to 0$. Di conseguenza, la corrente ai bordi si annulla, forzando $C = 0$ ovunque (Principio del Bilancio Dettagliato).
+
+La condizione di equilibrio equivale quindi a imporre l'annullamento della parentesi:
+\begin{equation}
+\label{eq:smol_current_zero}
+\frac{dV}{dx}\rho + T\frac{\partial \rho}{\partial x} = 0 \implies -\frac{1}{T} \frac{dV}{dx} = \frac{\partial}{\partial x} \ln \rho,
+\end{equation}
+la cui soluzione è la \textbf{distribuzione di Boltzmann}:
+\begin{equation}
+\label{eq:boltzmann_smoluchowski}
+\rho_{\mathrm{eq}}(x) = A \exp\!\left(-\frac{V(x)}{T}\right).
+\end{equation}
+
+La soluzione trovata è \underline{unica}, in quanto l'equazione differenziale del primo ordine introduce una sola costante di integrazione $A$, il cui valore è univocamente fissato dal vincolo di normalizzazione $\int \rho\, dx = 1$ (dove $A = 1/Z$, con $Z$ funzione di partizione).
+
+\emph{Nota}: Nel caso particolare di un potenziale armonico $V(x) = \frac{1}{2}\gamma x^2$, l'esponenziale restituisce esattamente la distribuzione gaussiana ricavata nelle sezioni precedenti.
+
+\paragraph{Nota sulla commutazione dei limiti e proprietà spettrali}
+
+Un aspetto matematicamente profondo di questo risultato riguarda la validità della riduzione dimensionale. L'equazione di Smoluchowski è stata ricavata applicando il limite di forte attrito ($m\gamma \to \infty$) \emph{prima} di cercare la soluzione stazionaria ($t \to \infty$). 
+
+Il fatto che la soluzione di equilibrio di Smoluchowski coincida esattamente con la marginalizzazione spaziale della distribuzione di Maxwell-Boltzmann completa (nello spazio delle fasi $x,p$) implica che \underline{i due limiti commutano}. 
+
+Formalmente, questo non è un risultato banale: l'operatore differenziale di Fokker-Planck nello spazio delle fasi e l'operatore di Smoluchowski nello spazio delle configurazioni agiscono su spazi funzionali di dimensionalità diversa. Ridurre la dimensionalità del sistema "integrando via" i momenti $p$ costituisce una \textbf{perturbazione singolare}. 
+
+La coerenza dei due approcci è garantita dall'\textbf{eliminazione adiabatica delle variabili veloci}: si può dimostrare rigorosamente che, nel limite $m\gamma \to \infty$, le proprietà spettrali (autovalori e autofunzioni) dell'operatore completo di Klein-Kramers separano le scale temporali. I modi associati al momento $p$ decadono infinitamente più veloci di quelli associati alla posizione $x$, garantendo che lo spettro a bassa frequenza dell'operatore completo converga esattamente allo spettro dell'operatore di Smoluchowski.
+
+\paragraph{Autofunzioni e spettro dell'operatore di Smoluchowski}
+
+Definiamo l'operatore differenziale di Smoluchowski (cfr. equazione~\eqref{eq:smoluchowski}):
+\begin{equation}
+\label{eq:smol_operator_def}
+\mathcal{S} := \frac{\partial}{\partial x}\!\left( \frac{dV}{dx} \cdot \right) + T\frac{\partial^2}{\partial x^2}.
+\end{equation}
+
+Si constata che questo operatore \underline{non è hermitiano} rispetto al prodotto scalare standard in $L^2$. Infatti, per la parte di deriva (drift) associata al potenziale, l'operatore aggiunto inverte i segni in modo asimmetrico:
+\[
+\left[ \frac{\partial}{\partial x}\!\left(\frac{dV}{dx} \cdot \right) \right]^\dagger = - \frac{dV}{dx} \frac{\partial}{\partial x} \neq \frac{\partial}{\partial x}\!\left(\frac{dV}{dx} \cdot \right).
+\]
+
+Il problema di trovare le sue autofunzioni, definite da $\mathcal{S} f_\lambda = -\lambda f_\lambda$, è molto più complesso rispetto al caso della Fokker--Planck puramente diffusiva. Se l'operatore non è hermitiano, gli autovalori potrebbero teoricamente avere una parte immaginaria complessa ($\Im(\lambda) \neq 0$), il che descriverebbe un sistema che compie oscillazioni nette mentre decade verso l'equilibrio. Inoltre, i coefficienti dell'operatore (come le derivate del potenziale) \underline{variano nello spazio}, rendendo l'equazione differenziale non a coefficienti costanti.
+
+Generalizzando a sistemi complessi, la dinamica si svolge su un \emph{landscape} (paesaggio) di potenziale $V(x)$ che può essere anche molto intricato. Il sistema tenderà a rilassare in prossimità dei suoi minimi locali, con la temperatura $T$ che definisce l'entità delle fluttuazioni stocastiche attorno a essi.
+
+\paragraph{Cambio di metrica e hermiticità}
+Il problema della non hermiticità di $\mathcal{S}$ si può affrontare introducendo una metrica diversa per i prodotti scalari nello spazio delle funzioni. Si dimostra che il nuovo prodotto scalare pesato:
+\begin{equation}
+\label{eq:weighted_metric}
+\langle f,g\rangle_G := \int_{-\infty}^{+\infty} dx\, f(x)\, e^{\frac{V(x)}{T}}\, g(x),
+\end{equation}
+restituisce la piena hermiticità all'operatore ($\mathcal{S} = \mathcal{S}^\dagger$).
+
+In effetti, quando si ha una base vettoriale non ortonormale, il prodotto scalare non è più $v \cdot w = \sum_k v_k w_k$, bensì $v \cdot w = \sum_{k,j} v_k G_{kj} w_j$, dove $G$ è il tensore metrico. Il fattore $e^{V(x)/T}$ (l'inverso della distribuzione di Boltzmann) gioca esattamente il ruolo di questo cambio di metrica. 
+
+Questa operazione garantisce matematicamente che tutti gli autovalori siano \underline{puramente reali}, vietando le oscillazioni e rispettando la reversibilità termodinamica di Onsager:
+"all'equilibrio termodinamico vale il \textbf{bilancio dettagliato}: ogni transizione $A\to B$ avviene con la stessa probabilità di $B\to A$ (non c'è freccia del tempo)"
+
+In questo nuovo spazio metrico per le funzioni, se $V(x)$ è un potenziale armonico, si ritrova lo stesso identico framework della Meccanica Quantistica: l'equazione per le autofunzioni si mappa in quella dell'oscillatore armonico e le soluzioni esatte sono descritte dai \textbf{polinomi di Hermite}.
+
+
+
+
+\end{document}
