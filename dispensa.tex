@@ -784,7 +784,7 @@ Essa equivale a un’equazione di continuità per la probabilità:
 
 \subsection{Limite continuo stocastico: equazione di Fokker--Planck}
 
-Assumiamo come \emph{ipotesi di lavoro} che \emph{$P(x,t)$ sia derivabile rispetto a spazio e tempo}.  
+Assumiamo come {ipotesi di lavoro} che \underline{$P(x,t)$ sia derivabile rispetto a spazio e tempo}.  
 Possiamo allora sviluppare in serie di Taylor l’equazione~\eqref{eq:rw_master} attorno a $(x,t)$, separatamente a LHS (rispetto al tempo) e a RHS (rispetto allo spazio):
 \begin{equation}
 \label{eq:taylor}
@@ -796,7 +796,7 @@ P(x,t) + \frac{\delta P}{\delta t}(x,t)\Delta t + o(t)
 \end{equation}
 perché le derivate prime a RHS si elidono a vicenda.
 
-Nel limite continuo (TLC) trascuriamo i termini $o(\Delta t)$ e, confrontando con \eqref{eq:rw_master}, otteniamo
+Nel \underline{limite continuo} (TLC) trascuriamo i termini $o(\Delta t)$ e, confrontando con \eqref{eq:rw_master}, otteniamo
 \begin{equation}
 \label{eq:diff_limit}
 \frac{\partial P}{\partial t}(t,x)
@@ -823,7 +823,7 @@ Segue l’equazione di \textbf{Fokker--Planck (di diffusione)}
 =\frac{D}{2}\frac{\partial^2 P}{\partial x^2}(t,x).
 \end{equation}
 
-A differenza di Liouville, l’equazione di FP \underline{non mantiene tutte le correlazioni della dinamica classica}, facendo uso del teorema del limite centrale.
+A differenza di Liouville, l’equazione di FP \emph{non mantiene tutte le correlazioni della dinamica classica}, facendo uso del teorema del limite centrale.
 
 \underline{L’equazione~\eqref{eq:fokker_planck} implica}
 \begin{equation}
@@ -832,20 +832,20 @@ A differenza di Liouville, l’equazione di FP \underline{non mantiene tutte le 
 \end{equation}
 cioè la velocità fisica non è definibile.
 
-Il random walk è quindi una descrizione \underline{efficace e non fondamentale}: descrive l’evoluzione di distribuzioni di probabilità e non traiettorie microscopiche.  
-A livello matematico, ciò equivale a dire che \underline{le traiettorie del random walk sono ovunque non derivabili}.
+Il random walk è quindi una descrizione \emph{efficace e non fondamentale}: descrive l’evoluzione di distribuzioni di probabilità e non traiettorie microscopiche.  
+A livello matematico, ciò equivale a dire che \emph{le traiettorie del random walk sono ovunque non derivabili}.
 
 \subsubsection{Soluzione della Fokker--Planck}
 \label{FP_solution}
 
 L’equazione~\eqref{eq:fokker_planck} è risolvibile imponendo:
 \begin{itemize}
-    \item \emph{condizione iniziale determinata}
+    \item \underline{}{condizione iniziale determinata}
     \[
     P(0,x)=\delta(x-x_0);
     \]
-    \item \emph{condizioni al contorno aperte}.
-    \item \emph{sistema 1D}
+    \item \underline{condizioni al contorno aperte}.
+    \item \underline{sistema 1D}
 \end{itemize}
 
 La soluzione è una distribuzione gaussiana centrata in $x_0$:
@@ -871,7 +871,7 @@ Risolvendo l'equazione per la trasformata di Fourier
 
 Si noti che l'equazione è lineare, e infatti la sua soluzione è invariante per somma. 
 
-\underline{La varianza cresce linearmente nel tempo}:
+\emph{La varianza cresce linearmente nel tempo}:
 \begin{equation}
 \label{eq:variance}
 \sigma^2(t)=\langle (x-\langle x\rangle)^2\rangle = Dt.
@@ -913,7 +913,7 @@ e usando le condizioni al contorno ($p,\partial_x p \to 0$ per $|x|\to\infty$), 
 =\frac{D}{2}\int dx\,\frac{(\partial_x p)^2}{p}\ge 0.
 \end{equation}
 
-\underline{La dinamica di Fokker--Planck soddisfa un principio di aumento dell’entropia}.  
+\emph{La dinamica di Fokker--Planck soddisfa un principio di aumento dell’entropia}.  
 L’irreversibilità emerge dall’introduzione di una dinamica coarse-grained.
 
 
@@ -932,7 +932,7 @@ così che l’evoluzione temporale della distribuzione di probabilità $p(x,t)$ 
 \frac{\partial p}{\partial t} = \mathbf{P}\,p .
 \end{equation}
 
-Qui $p(x,t)$ è una \emph{densità di probabilità}, normalizzata a ogni istante:
+Qui $p(x,t)$ è una \underline{densità di probabilità}, normalizzata a ogni istante:
 \[
 \int dx\, p(x,t)=1.
 \]
@@ -944,7 +944,7 @@ Consideriamo lo spazio $L^2$, dotato del prodotto scalare
 \label{eq:l2_inner}
 \langle f,g\rangle_2 := \int dx\, f^*(x)\,g(x),
 \end{equation}
-dove le funzioni sono \emph{quadrato-integrabili}.  
+dove le funzioni sono \underline{}{quadrato-integrabili}.  
 Questo garantisce che la norma sia finita e rende ben definita l’analisi spettrale dell’operatore.
 
 \paragraph{Proprietà di hermiticità}
@@ -985,8 +985,8 @@ Anche il secondo termine di bordo si annulla, quindi
 \hfill $\square$
 
 \paragraph{Autovalore nullo}
-Se sono in un \emph{dominio chiuso} per le funzioni (es: $[-L/2, L/2]$),
-\underline{l’operatore $\mathbf{P}$ possiede sicuramente un autovalore nullo}.  
+Se sono in un \underline{dominio chiuso} per le funzioni (es: $[-L/2, L/2]$),
+\emph{l’operatore $\mathbf{P}$ possiede sicuramente un autovalore nullo}.  
 La corrispondente autofunzione è la funzione costante (identità) $\mathbb{I}(x)=1$ (l'ipotesi di dominio chiuso serve per mantenere la quadrato sommabilità per $\mathbb I$). 
 
 \emph{Dimostrazione.}  
@@ -1042,14 +1042,14 @@ f_\lambda(x)=A\sin(kx)+B\cos(kx),
 
 Queste funzioni:
 \begin{itemize}
-    \item hanno \underline{media nulla} (eccetto il modo costante);
-    \item sono \underline{periodiche};
+    \item hanno \emph{media nulla} (eccetto il modo costante);
+    \item sono \emph{periodiche};
     \item descrivono i modi di rilassamento della distribuzione.
 \end{itemize}
 
 \paragraph{Dominio chiuso e quantizzazione}
 
-Se il dominio è \emph{chiuso} (ad esempio condizioni periodiche), devono valere condizioni al contorno del tipo
+Se il dominio è \underline{chiuso} (ad esempio condizioni periodiche), devono valere condizioni al contorno del tipo
 \[
 f_\lambda(x+L)=f_\lambda(x).
 \]
@@ -1162,7 +1162,7 @@ Combinando questo termine con la diffusione stocastica, otteniamo la \textbf{Fok
 + \gamma \frac{\partial}{\partial p}\!\left[p\,\rho(p,t)\right].
 \end{equation}
 
-\underline{L’equazione rimane lineare}, quindi invariabile per combinazione lineare delle soluzioni.
+\emph{L’equazione rimane lineare}, quindi invariabile per combinazione lineare delle soluzioni.
 
 \subsubsection{Relazione di Einstein}
 
@@ -1210,7 +1210,7 @@ Confrontando con~\eqref{eq:p2_temperature}, otteniamo la \textbf{relazione di Ei
 D = 2\gamma m k_B T.
 \end{equation}
 
-\underline{Il coefficiente di diffusione è direttamente legato alla temperatura}.  
+\emph{Il coefficiente di diffusione è direttamente legato alla temperatura}.  
 Misurando la dissipazione e le fluttuazioni del sistema stocastico, si ottiene informazione termodinamica.
 
 \subsubsection{Connessione con la meccanica statistica}
@@ -1221,7 +1221,7 @@ Riscrivendo~\eqref{eq:gaussian_eq} in termini dell’energia cinetica $E=p^2/(2m
 \rho_{\mathrm{eq}}(p)
 = A \exp\!\left(-\frac{E}{k_B T}\right),
 \end{equation}
-che coincide con la distribuzione di \underline{Maxwell--Boltzmann}.
+che coincide con la distribuzione di \emph{Maxwell--Boltzmann}.
 
 Questa distribuzione è nota per massimizzare l’entropia di Gibbs~\eqref{eq:gibbs_entropy} a energia media fissata.  
 
@@ -1337,7 +1337,7 @@ L'incremento stocastico $\Delta W_t$ viene campionato a ogni passo da una distri
 \[
 \langle \Delta W_t \rangle = 0, \qquad \langle (\Delta W_t)^2 \rangle = \Delta t.
 \]
-Si noti che l'integrazione numerica stocastica \underline{non riproduce la singola traiettoria fisica} (che è impredicibile per natura), ma permette, campionando molte traiettorie, di ricostruire l'evoluzione della densità di probabilità $\rho(x,t)$. 
+Si noti che l'integrazione numerica stocastica \emph{non riproduce la singola traiettoria fisica} (che è impredicibile per natura), ma permette, campionando molte traiettorie, di ricostruire l'evoluzione della densità di probabilità $\rho(x,t)$. 
 
 Fisicamente, l'equazione~\eqref{eq:ou_position} descrive una particella confinata in una buca di potenziale elastica $V(x)$ e sottoposta all'agitazione termica. La sua soluzione stazionaria è la distribuzione di Boltzmann:
 \[
@@ -1366,7 +1366,7 @@ Riscrivendo l'equazione per $dp$ in funzione di $\tau$ (dividendo tutto per $m\g
 \end{equation}
 dove l'incremento di Wiener è stato opportunamente riscalato per la nuova unità di misura temporale.
 
-Nel \textbf{limite di forte attrito} (o limite \emph{overdamped}, per $m\gamma \to \infty$), il termine inerziale diventa trascurabile ($\frac{dp}{m\gamma} \to 0$). Imponendo questa condizione nella~\eqref{eq:rescaled_dp}, otteniamo un'equazione stocastica unicamente per la posizione:
+Nel \textbf{limite di forte attrito} (o limite \underline{overdamped}, per $m\gamma \to \infty$), il termine inerziale diventa trascurabile ($\frac{dp}{m\gamma} \to 0$). Imponendo questa condizione nella~\eqref{eq:rescaled_dp}, otteniamo un'equazione stocastica unicamente per la posizione:
 \begin{equation}
 \label{eq:overdamped_langevin}
 dx = -\frac{dV}{dx} d\tau + \sqrt{2T}\, dW_\tau.
@@ -1412,7 +1412,7 @@ la cui soluzione è la \textbf{distribuzione di Boltzmann}:
 \rho_{\mathrm{eq}}(x) = A \exp\!\left(-\frac{V(x)}{T}\right).
 \end{equation}
 
-La soluzione trovata è \underline{unica}, in quanto l'equazione differenziale del primo ordine introduce una sola costante di integrazione $A$, il cui valore è univocamente fissato dal vincolo di normalizzazione $\int \rho\, dx = 1$ (dove $A = 1/Z$, con $Z$ funzione di partizione).
+La soluzione trovata è \emph{unica}, in quanto l'equazione differenziale del primo ordine introduce una sola costante di integrazione $A$, il cui valore è univocamente fissato dal vincolo di normalizzazione $\int \rho\, dx = 1$ (dove $A = 1/Z$, con $Z$ funzione di partizione).
 
 \emph{Nota}: Nel caso particolare di un potenziale armonico $V(x) = \frac{1}{2}\gamma x^2$, l'esponenziale restituisce esattamente la distribuzione gaussiana ricavata nelle sezioni precedenti.
 
