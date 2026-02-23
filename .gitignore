@@ -1,3 +1,4 @@
+# LaTeX
 *.aux
 *.log
 *.toc
@@ -5,3 +6,10 @@
 *.synctex.gz
 *.fls
 *.fdb_latexmk
+*.blg
+*.bbl
+
+# Editor & System
+.vscode/
+.DS_Store
+Thumbs.db
